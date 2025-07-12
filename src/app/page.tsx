@@ -6,7 +6,6 @@ import { sendToWhisper } from './whisper';
 import {
   FaMicrophone,
   FaPaperPlane,
-  FaCircleNotch,
   FaWindowMinimize,
   FaWindowRestore,
 } from 'react-icons/fa';
@@ -34,7 +33,13 @@ export default function Home() {
 
   useEffect(() => {
     if (!isRecording) {
-      mediaRecorderRef.current?.state !== 'inactive' && mediaRecorderRef.current?.stop();
+      // stop
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== 'inactive'
+      ) {
+        mediaRecorderRef.current.stop();
+      }
       cancelAnimationFrame(rafRef.current);
       setFreqData([]);
       return;
@@ -184,7 +189,6 @@ export default function Home() {
                     <FaMicrophone className="mr-2" />
                     {isRecording ? 'Stop Recording' : 'Start Recording'}
                   </button>
-
                   <button
                     onClick={handleSendClick}
                     className="flex-1 flex items-center justify-center py-2 px-4 bg-green-600 rounded-lg font-semibold transition hover:bg-green-700"
