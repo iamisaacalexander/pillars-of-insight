@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Rnd, RndResizeCallback, RndDragCallback } from 'react-rnd';
-import { sendToWhisper } from './whisper';
+import { sendToWhisper } from './whisper'; // adjust path if needed
 import {
   FaMicrophone,
   FaPaperPlane,
@@ -11,41 +11,43 @@ import {
 } from 'react-icons/fa';
 
 const HEADER_BAR_HEIGHT = 48;
+const METER_BARS = 32; // number of visual bars in the equalizer
 
 export default function Home() {
-  // state
+  // recording + transcript state
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [gptReply, setGptReply] = useState('');
+
+  // equalizer frequency data
   const [freqData, setFreqData] = useState<number[]>([]);
 
+  // tablet state
   const [isMinimized, setIsMinimized] = useState(false);
   const [size, setSize] = useState({ width: 380, height: 440 });
   const [prevSize, setPrevSize] = useState(size);
   const [position, setPosition] = useState({ x: 100, y: 120 });
 
-  // refs for MediaRecorder + meter
+  // refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const rafRef = useRef<number>(0);
 
+  // RECORD + METER EFFECT
   useEffect(() => {
     if (!isRecording) {
-      // stop
-      if (
-        mediaRecorderRef.current &&
-        mediaRecorderRef.current.state !== 'inactive'
-      ) {
-        mediaRecorderRef.current.stop();
-      }
+      // Stop recorder & meter
+      mediaRecorderRef.current?.state !== 'inactive' &&
+        mediaRecorderRef.current?.stop();
       cancelAnimationFrame(rafRef.current);
       setFreqData([]);
       return;
     }
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      // --- Meter setup ---
       const audioCtx = new AudioContext();
       audioCtxRef.current = audioCtx;
       const source = audioCtx.createMediaStreamSource(stream);
@@ -57,11 +59,19 @@ export default function Home() {
       const updateMeter = () => {
         const data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
-        setFreqData(Array.from(data));
+        // reduce to METER_BARS bars
+        const chunkSize = Math.floor(data.length / METER_BARS);
+        const bars = Array.from({ length: METER_BARS }, (_, i) => {
+          const chunk = data.slice(i * chunkSize, (i + 1) * chunkSize);
+          const avg = chunk.reduce((sum, v) => sum + v, 0) / chunk.length;
+          return avg / 255;
+        });
+        setFreqData(bars);
         rafRef.current = requestAnimationFrame(updateMeter);
       };
       updateMeter();
 
+      // --- Recorder setup ---
       const mr = new MediaRecorder(stream);
       mediaRecorderRef.current = mr;
       audioChunksRef.current = [];
@@ -70,13 +80,20 @@ export default function Home() {
       mr.onstop = async () => {
         cancelAnimationFrame(rafRef.current);
         try {
-          if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
+          if (
+            audioCtxRef.current &&
+            audioCtxRef.current.state !== 'closed'
+          ) {
             await audioCtxRef.current.close();
           }
         } catch {}
         setTranscript('📝 Transcribing…');
-        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+        const blob = new Blob(audioChunksRef.current, {
+          type: 'audio/webm',
+        });
+        const file = new File([blob], 'recording.webm', {
+          type: 'audio/webm',
+        });
         const text = await sendToWhisper(file);
         setTranscript(text || '❗ Could not transcribe.');
       };
@@ -85,6 +102,7 @@ export default function Home() {
     });
   }, [isRecording]);
 
+  // handlers
   const handleMicClick = () => {
     setTranscript('');
     setGptReply('');
@@ -118,26 +136,23 @@ export default function Home() {
     setIsMinimized((m) => !m);
   };
 
-  // drag callback
+  // drag & resize callbacks
   const onDragStop: RndDragCallback = (_e, d) => {
     setPosition({ x: d.x, y: d.y });
   };
-
-  // resize callback: ref gives new size, newPos gives new position
   const onResizeStop: RndResizeCallback = (_e, _dir, ref, _delta, newPos) => {
-    setSize({
-      width: ref.offsetWidth,
-      height: ref.offsetHeight,
-    });
+    setSize({ width: ref.offsetWidth, height: ref.offsetHeight });
     setPosition(newPos);
   };
 
   return (
     <>
+      {/* Fixed Header */}
       <header className="fixed top-0 left-0 w-full h-12 bg-gray-800 text-white flex items-center justify-center z-20 shadow-md">
         <span className="text-xl font-bold">🧠 Pillars of Insight</span>
       </header>
 
+      {/* Main Area */}
       <main className="pt-12 w-full h-screen bg-gradient-to-br from-blue-900 to-gray-900 overflow-hidden">
         <Rnd
           size={size}
@@ -149,6 +164,7 @@ export default function Home() {
           minHeight={HEADER_BAR_HEIGHT}
         >
           <div className="flex flex-col bg-gray-800 rounded-2xl shadow-2xl backdrop-blur-xl bg-opacity-70 h-full">
+            {/* Tablet Title Bar */}
             <div
               className="flex items-center justify-between px-4 cursor-move select-none bg-gray-900 rounded-t-2xl"
               style={{ height: HEADER_BAR_HEIGHT }}
@@ -164,6 +180,7 @@ export default function Home() {
               </button>
             </div>
 
+            {/* Tablet Content */}
             {!isMinimized && (
               <div className="flex-1 p-4 overflow-auto flex flex-col">
                 <textarea
@@ -198,19 +215,22 @@ export default function Home() {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 mt-4">
-                  <div className="flex-1 h-2.5 rounded-full bg-gray-700">
-                    <div
-                      className="h-2.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500"
-                      style={{
-                        width: `${(freqData[0] || 0) * 100}%`,
-                      }}
-                    />
+                {/* Equalizer Audio Meter */}
+                {isRecording && (
+                  <div className="w-full flex items-end gap-0.5 h-12">
+                    {freqData.map((level, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 bg-gradient-to-t from-purple-500 to-blue-500 rounded-sm transition-all"
+                        style={{
+                          height: `${level * 100}%`,
+                          minWidth: 2,
+                          marginLeft: i === 0 ? 0 : 1,
+                        }}
+                      />
+                    ))}
                   </div>
-                  <span className="text-xs text-gray-400">
-                    {Math.round((freqData[0] || 0) * 100)}%
-                  </span>
-                </div>
+                )}
               </div>
             )}
           </div>
