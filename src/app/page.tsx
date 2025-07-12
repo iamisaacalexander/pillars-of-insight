@@ -18,7 +18,6 @@ export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [gptReply, setGptReply] = useState('');
-  const [volume, setVolume] = useState(0);
   const [freqData, setFreqData] = useState<number[]>([]);
 
   const [isMinimized, setIsMinimized] = useState(false);
@@ -36,7 +35,7 @@ export default function Home() {
   // handle recording + audio meter
   useEffect(() => {
     if (!isRecording) {
-      // stop
+      // stop recorder
       if (
         mediaRecorderRef.current &&
         mediaRecorderRef.current.state !== 'inactive'
@@ -44,7 +43,6 @@ export default function Home() {
         mediaRecorderRef.current.stop();
       }
       cancelAnimationFrame(rafRef.current);
-      setVolume(0);
       return;
     }
 
@@ -62,9 +60,6 @@ export default function Home() {
         const data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
         setFreqData(Array.from(data));
-        // Keep the old max-based volume for compatibility if needed
-        const max = Math.max(...data) / 255;
-        setVolume(max);
         rafRef.current = requestAnimationFrame(updateMeter);
       };
       updateMeter();
@@ -78,9 +73,8 @@ export default function Home() {
       mr.onstop = async () => {
         // stop meter
         cancelAnimationFrame(rafRef.current);
-        setVolume(0);
 
-        // close audio context safely
+        // close audio context
         try {
           if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
             await audioCtxRef.current.close();
