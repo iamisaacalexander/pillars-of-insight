@@ -175,4 +175,43 @@ export default function Home() {
                 <div className="flex items-center gap-3 mb-3">
                   <button
                     onClick={handleMicClick}
-                    className={`flex-1 flex items-center justify-center py-2 px-4 ro
+                    className={`flex-1 flex items-center justify-center py-2 px-4 rounded-lg font-semibold transition ${
+                      isRecording
+                        ? 'bg-red-600 hover:bg-red-700'
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    }`}
+                  >
+                    <FaMicrophone className="mr-2" />
+                    {isRecording ? 'Stop Recording' : 'Start Recording'}
+                  </button>
+
+                  <button
+                    onClick={handleSendClick}
+                    className="flex-1 flex items-center justify-center py-2 px-4 bg-green-600 rounded-lg font-semibold transition hover:bg-green-700"
+                  >
+                    <FaPaperPlane className="mr-2" />
+                    Send to GPT
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-center gap-2 mt-4">
+                  <div className="flex-1 h-2.5 rounded-full bg-gray-700">
+                    <div
+                      className="h-2.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500"
+                      style={{
+                        width: `${(freqData[0] || 0) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    {Math.round((freqData[0] || 0) * 100)}%
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </Rnd>
+      </main>
+    </>
+  );
+}
