@@ -8,8 +8,8 @@ export async function POST(req: Request) {
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      console.error('Missing OpenAI API key');
-      return NextResponse.json({ error: 'Missing OpenAI API key' }, { status: 500 });
+      // Return 401 Unauthorized if API key is missing
+      return NextResponse.json({ error: 'Missing OpenAI API key' }, { status: 401 });
     }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -29,7 +29,10 @@ export async function POST(req: Request) {
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('OpenAI response error:', errText);
+      // If OpenAI returns 401, forward that status
+      if (response.status === 401) {
+        return NextResponse.json({ error: 'Unauthorized: Invalid OpenAI API key' }, { status: 401 });
+      }
       return NextResponse.json({ error: errText }, { status: response.status });
     }
 
