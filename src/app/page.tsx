@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Rnd } from 'react-rnd';
+import { Rnd, RndResizeCallback, RndDragCallback } from 'react-rnd';
 import { sendToWhisper } from './whisper';
 import {
   FaMicrophone,
@@ -32,22 +32,15 @@ export default function Home() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const rafRef = useRef<number>(0);
 
-  // handle recording + audio meter
   useEffect(() => {
     if (!isRecording) {
-      // stop recorder
-      if (
-        mediaRecorderRef.current &&
-        mediaRecorderRef.current.state !== 'inactive'
-      ) {
-        mediaRecorderRef.current.stop();
-      }
+      mediaRecorderRef.current?.state !== 'inactive' && mediaRecorderRef.current?.stop();
       cancelAnimationFrame(rafRef.current);
+      setFreqData([]);
       return;
     }
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      // setup meter
       const audioCtx = new AudioContext();
       audioCtxRef.current = audioCtx;
       const source = audioCtx.createMediaStreamSource(stream);
@@ -64,30 +57,21 @@ export default function Home() {
       };
       updateMeter();
 
-      // setup recorder
       const mr = new MediaRecorder(stream);
       mediaRecorderRef.current = mr;
       audioChunksRef.current = [];
 
       mr.ondataavailable = (e) => audioChunksRef.current.push(e.data);
       mr.onstop = async () => {
-        // stop meter
         cancelAnimationFrame(rafRef.current);
-
-        // close audio context
         try {
           if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
             await audioCtxRef.current.close();
           }
-        } catch {
-          // ignore
-        }
-
+        } catch {}
         setTranscript('📝 Transcribing…');
         const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const file = new File([blob], 'recording.webm', {
-          type: 'audio/webm',
-        });
+        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
         const text = await sendToWhisper(file);
         setTranscript(text || '❗ Could not transcribe.');
       };
@@ -129,31 +113,37 @@ export default function Home() {
     setIsMinimized((m) => !m);
   };
 
+  // drag callback
+  const onDragStop: RndDragCallback = (_e, d) => {
+    setPosition({ x: d.x, y: d.y });
+  };
+
+  // resize callback: ref gives new size, newPos gives new position
+  const onResizeStop: RndResizeCallback = (_e, _dir, ref, _delta, newPos) => {
+    setSize({
+      width: ref.offsetWidth,
+      height: ref.offsetHeight,
+    });
+    setPosition(newPos);
+  };
+
   return (
     <>
-      {/* Fixed Header */}
       <header className="fixed top-0 left-0 w-full h-12 bg-gray-800 text-white flex items-center justify-center z-20 shadow-md">
         <span className="text-xl font-bold">🧠 Pillars of Insight</span>
       </header>
 
-      {/* Main Area */}
       <main className="pt-12 w-full h-screen bg-gradient-to-br from-blue-900 to-gray-900 overflow-hidden">
         <Rnd
-          size={{ width: size.width, height: size.height }}
-          position={{ x: position.x, y: position.y }}
-          onDragStop={(_, d) => setPosition({ x: d.x, y: d.y })}
-          onResizeStop={(_, __, ref, ___, delta) =>
-            setSize((s) => ({
-              width: s.width + delta.width,
-              height: s.height + delta.height,
-            }))
-          }
+          size={size}
+          position={position}
+          onDragStop={onDragStop}
+          onResizeStop={onResizeStop}
           bounds="parent"
           minWidth={300}
           minHeight={HEADER_BAR_HEIGHT}
         >
           <div className="flex flex-col bg-gray-800 rounded-2xl shadow-2xl backdrop-blur-xl bg-opacity-70 h-full">
-            {/* Title Bar */}
             <div
               className="flex items-center justify-between px-4 cursor-move select-none bg-gray-900 rounded-t-2xl"
               style={{ height: HEADER_BAR_HEIGHT }}
@@ -169,7 +159,6 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Content */}
             {!isMinimized && (
               <div className="flex-1 p-4 overflow-auto flex flex-col">
                 <textarea
@@ -186,49 +175,4 @@ export default function Home() {
                 <div className="flex items-center gap-3 mb-3">
                   <button
                     onClick={handleMicClick}
-                    className={`flex-1 flex items-center justify-center py-2 px-4 rounded-lg font-semibold transition ${
-                      isRecording
-                        ? 'bg-red-600 hover:bg-red-700'
-                        : 'bg-blue-600 hover:bg-blue-700'
-                    }`}
-                  >
-                    <FaMicrophone className="mr-2" />
-                    {isRecording ? 'Stop Recording' : 'Start Recording'}
-                  </button>
-                  <button
-                    onClick={handleSendClick}
-                    disabled={!transcript}
-                    className="w-12 h-12 flex items-center justify-center bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-full transition"
-                  >
-                    {gptReply === '💡 Thinking…' ? (
-                      <FaCircleNotch className="animate-spin text-white" />
-                    ) : (
-                      <FaPaperPlane className="text-white" />
-                    )}
-                  </button>
-                </div>
-
-                {/* Audio Meter */}
-                {isRecording && (
-                  <div className="w-full flex items-end gap-0.5 h-8 mb-2">
-                    {freqData.slice(0, 32).map((v, i) => (
-                      <div
-                        key={i}
-                        className="flex-1 bg-green-400 rounded transition-all"
-                        style={{
-                          height: `${(v / 255) * 100}%`,
-                          minWidth: 2,
-                          marginLeft: i === 0 ? 0 : 1,
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </Rnd>
-      </main>
-    </>
-  );
-}
+                    className={`flex-1 flex items-center justify-center py-2 px-4 ro
