@@ -329,7 +329,7 @@ export default function Home() {
     <>
       {/* ─── Header w/ Tools Toggle ─────────────────────────────── */}
       <header className="fixed top-0 left-0 w-full h-12 bg-gray-800 text-white flex items-center justify-center z-20 shadow-md">
-        <span className="text-xl font-bold">Pillars of Insight</span>
+        <span className="text-xl font-bold handwritten">Pillars of Insight</span>
         <button
           onClick={()=>setToolsOpen(o=>!o)}
           className="absolute right-4"
@@ -394,7 +394,7 @@ export default function Home() {
                 />
 
                 {/* GPT Reply */}
-                <div className="flex-1 p-3 mb-4 bg-white bg-opacity-20 rounded-lg text-sm text-charcoal overflow-auto">
+                <div className="flex-1 p-3 mb-4 bg-white bg-opacity-20 rounded-lg text-sm text-charcoal overflow-auto ai-dialogue">
                   {gptReply||"GPT reply will appear here…"}
                 </div>
 
@@ -433,7 +433,7 @@ export default function Home() {
 
                 {/* World-Building: Porticos List */}
                 <div className="mb-4">
-                  <h2 className="text-base font-bold text-charcoal mb-2">Porticos</h2>
+                  <h2 className="text-base font-bold text-charcoal mb-2 handwritten">Porticos</h2>
                   <ul className="space-y-2">
                     {palisade.porticos.map(portico => (
                       <li key={portico.id} className="sketch-border bg-white bg-opacity-40 rounded p-2">

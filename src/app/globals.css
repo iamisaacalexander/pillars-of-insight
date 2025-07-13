@@ -2,12 +2,21 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* Import Caveat font for headings and handwritten elements */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+
 /* Cream-paper background + charcoal text */
 body {
   background: url("/assets/paper-texture.png") #f7f2eb;
   background-size: cover;
   color: #333333;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+.handwritten, h1.handwritten, h2.handwritten, h3.handwritten, .ai-dialogue {
+  font-family: 'Caveat', cursive !important;
+  letter-spacing: 0.5px;
+  font-weight: 700;
 }
 
 /* Floating “pencil” wiggle */
