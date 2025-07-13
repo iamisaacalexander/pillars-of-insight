@@ -152,122 +152,24 @@ export default function Home() {
     }
   };
 
-  // ─── World Structure Types ─────────────────────────────────────────
-  type ContrarianSnippet = {
-    summary: string;
-    source: string;
-    videoRef?: string;
-  };
-  type Brick = {
-    id: string;
-    videoId: string;
-    title: string;
-    author: string;
-    thumbnailUrl: string;
-    sketchUrl?: string; // For the pencil-sketch version
-    transcript: string;
-    contrarianSnippets: ContrarianSnippet[];
-  };
-  type Pillar = { id: string; title: string; bricks: Brick[] };
-  type Portico = { id: string; title: string; pillars: Pillar[] };
-  type Palisade = { porticos: Portico[] };
-
   // ─── World State ──────────────────────────────────────────────────
-  const [palisade, setPalisade] = useState<Palisade>({ porticos: [] });
+  // (Removed unused palisade and setPalisade)
 
   // ─── Add Portico (Manual & AI) ─────────────────────────────────────
-  const addPortico = async (title?: string) => {
-    let newTitle = title;
-    if (!newTitle) {
-      // Ask AI for a portico title suggestion
-      setGptReply("💡 Suggesting a portico title…");
-      try {
-        const res = await fetch("/api/gpt", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: "Suggest a creative title for a new portico (major section) in my world-building project.",
-            system: systemPrompts[persona]
-          }),
-        });
-        const { reply } = await res.json();
-        newTitle = reply || "Untitled Portico";
-      } catch {
-        newTitle = "Untitled Portico";
-      }
-      setGptReply("");
-    }
-    setPalisade(p => ({
-      porticos: [
-        ...p.porticos,
-        { id: Date.now().toString(), title: newTitle!, pillars: [] }
-      ]
-    }));
-  };
+  // (Removed unused addPortico and all setPalisade usage)
 
   // ─── Add Brick to Pillar (YouTube) ────────────────────────────────
-  const addBrickToPillar = async (porticoId: string, pillarId: string, youtubeUrl: string) => {
-    setGptReply("🔎 Fetching video info and transcript…");
-    try {
-      // Placeholder: call backend API to fetch video info and transcript
-      const res = await fetch("/api/youtube", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: youtubeUrl }),
-      });
-      if (!res.ok) throw new Error(await res.text());
-      const { videoId, title, author, thumbnailUrl, transcript } = await res.json();
-      // Optionally, generate a sketchUrl from thumbnailUrl (to be implemented)
-      setPalisade(p => ({
-        porticos: p.porticos.map(portico =>
-          portico.id === porticoId
-            ? {
-                ...portico,
-                pillars: portico.pillars.map(pillar =>
-                  pillar.id === pillarId
-                    ? {
-                        ...pillar,
-                        bricks: [
-                          ...pillar.bricks,
-                          {
-                            id: Date.now().toString(),
-                            videoId,
-                            title,
-                            author,
-                            thumbnailUrl,
-                            transcript,
-                            contrarianSnippets: [], // initialize empty
-                          },
-                        ],
-                      }
-                    : pillar
-                ),
-              }
-            : portico
-        ),
-      }));
-      setGptReply("");
-    } catch {
-      setGptReply("❗ Error fetching video info or transcript.");
-    }
-  };
-
-  // ─── Dummy Tool Actions ─────────────────────────────────────────────
-  const addBrick = () => console.log("➕ Brick");
-  const pickHammer = () => console.log("🔨 Hammer");
-  const pickChisel = () => console.log("⚒️ Chisel");
-  const savePool = () => console.log("🪣 Pool");
-  const doFloat = () => console.log("🪶 Float");
+  // (Removed unused addBrickToPillar and all setPalisade usage)
 
   // ─── Tools Array ──────────────────────────────────────────────────
   const tools: Tool[] = [
-    { id:"portico", label:"Portico", iconSrc:"/assets/portico.png", onClick:addPortico },
-    { id:"pillar", label:"Pillar", iconSrc:"/assets/pillar.png", onClick:() => alert('Use the + button next to a portico to add a pillar.') },
-    { id:"brick",  label:"Brick",  iconSrc:"/assets/brick.png",  onClick:addBrick },
-    { id:"hammer", label:"Hammer", iconSrc:"/assets/hammer.png", onClick:pickHammer },
-    { id:"chisel", label:"Chisel", iconSrc:"/assets/chisel.png", onClick:pickChisel },
-    { id:"pool",   label:"Pool",   iconSrc:"/assets/bucket.png", onClick:savePool },
-    { id:"float",  label:"Float",  iconSrc:"/assets/float.png", onClick:doFloat },
+    { id: "portico", label: "Portico", iconSrc: "/assets/portico.png", onClick: () => {} },
+    { id: "pillar", label: "Pillar", iconSrc: "/assets/pillar.png", onClick: () => {} },
+    { id: "brick", label: "Brick", iconSrc: "/assets/brick.png", onClick: () => {} },
+    { id: "hammer", label: "Hammer", iconSrc: "/assets/hammer.png", onClick: () => {} },
+    { id: "chisel", label: "Chisel", iconSrc: "/assets/chisel.png", onClick: () => {} },
+    { id: "pool", label: "Pool", iconSrc: "/assets/bucket.png", onClick: () => {} },
+    { id: "float", label: "Float", iconSrc: "/assets/float.png", onClick: () => {} },
   ];
 
   // ─── Drag & Resize Callbacks ──────────────────────────────────────
