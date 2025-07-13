@@ -9,44 +9,44 @@ export interface Tool {
 }
 
 export interface ToolsPanelProps {
-  isOpen: boolean;
   tools: Tool[];
-  onToggle: () => void;
+  vertical?: boolean;
+  className?: string;
 }
 
+// New: vertical, PNG-backed, icon-only toolbar for tablet
 export const ToolsPanel: React.FC<ToolsPanelProps> = ({
-  isOpen,
   tools,
-  onToggle
+  vertical = true,
+  className = "",
 }) => (
-  <aside
-    className={`fixed top-16 right-4 z-30 transition-transform duration-300 ${
-      isOpen ? "translate-x-0" : "translate-x-full"
-    } bg-paperCream bg-opacity-90 shadow-xl rounded-xl p-4 w-48 border border-charcoal`}
-    style={{ pointerEvents: isOpen ? "auto" : "none" }}
+  <div
+    className={`relative flex ${vertical ? "flex-col" : "flex-row"} items-center justify-center" ${className}`.trim()}
+    style={{ width: vertical ? 64 : undefined, height: vertical ? 320 : undefined }}
   >
-    <div className="flex items-center justify-between mb-2">
-      <Image src="/assets/tools-icon.png" alt="Tools" width={24} height={24} className="w-6 h-6" />
-      <button
-        onClick={onToggle}
-        className="text-charcoal hover:text-gray-800 text-lg font-bold px-2"
-        title="Close tools panel"
-      >
-        ×
-      </button>
-    </div>
-    <div className="grid grid-cols-2 gap-3">
+    {/* Toolbar PNG background */}
+    <Image
+      src="/assets/tool-bar.png"
+      alt="Toolbar"
+      width={64}
+      height={320}
+      className="absolute left-0 top-0 w-16 h-80 pointer-events-none select-none"
+      draggable={false}
+      priority
+    />
+    {/* Tool icons stacked vertically, no boxes */}
+    <div className="relative flex flex-col items-center justify-center gap-2 z-10 mt-4">
       {tools.map(tool => (
         <button
           key={tool.id}
           onClick={tool.onClick}
-          className="flex flex-col items-center p-1 sketch-border pencil-float"
+          className="p-0 bg-transparent border-none shadow-none hover:scale-110 transition"
           title={tool.label}
+          style={{ width: 32, height: 32 }}
         >
-          <Image src={tool.iconSrc} alt={tool.label} width={32} height={32} className="w-8 h-8 object-contain" />
-          <span className="text-xs text-charcoal mt-1">{tool.label}</span>
+          <Image src={tool.iconSrc} alt={tool.label} width={28} height={28} className="w-7 h-7 object-contain" />
         </button>
       ))}
     </div>
-  </aside>
+  </div>
 );
