@@ -352,343 +352,374 @@ export default function Home() {
           minWidth={80}
           minHeight={HEADER_BAR_HEIGHT}
         >
-          <div className="sketch-border flex flex-col bg-paperCream bg-opacity-60 h-full">
-            {/* Title Bar */}
+          <div
+            className={`relative flex h-full transition-all duration-300 ease-in-out ${tabletMode === "compact" ? "shadow-lg" : "shadow-2xl"}`}
+            style={{ background: 'none' }}
+          >
+            {/* Tablet PNG background */}
+            <Image
+              src={tabletMode === "compact" ? "/assets/tablet-mini.png" : "/assets/tablet.png"}
+              alt="Tablet"
+              fill
+              className="absolute left-0 top-0 w-full h-full z-0 pointer-events-none select-none transition-all duration-300"
+              style={{ objectFit: 'fill' }}
+              priority
+              draggable={false}
+            />
+            {/* Tablet content */}
             <div
-              className="flex items-center justify-between px-4 cursor-move select-none rounded-t-2xl"
-              style={{ height: HEADER_BAR_HEIGHT }}
+              className={`relative flex flex-col flex-1 h-full z-10 transition-all duration-300 ${tabletMode === "compact" ? "p-2" : "p-6"}`}
+              style={{
+                paddingTop: tabletMode === "compact" ? 8 : 24,
+                paddingBottom: tabletMode === "compact" ? 8 : 24,
+                paddingLeft: tabletMode === "compact" ? 8 : 24,
+                paddingRight: tabletMode === "compact" ? 8 : 24,
+              }}
             >
-              <span className="text-lg font-semibold text-charcoal">
-                Tablet Guide
-              </span>
-              <button
-                onClick={cycleTabletMode}
-                className="pencil-float text-charcoal hover:text-gray-800"
-                title={
-                  tabletMode==="normal" ? "Minimize to header" :
-                  tabletMode==="header" ? "Compact mode" :
-                  "Restore full"
-                }
+              {/* Title Bar */}
+              <div
+                className="flex items-center justify-between px-2 cursor-move select-none"
+                style={{ height: HEADER_BAR_HEIGHT }}
               >
-                {tabletMode==="compact" ? <FaWindowRestore/> :
-                 tabletMode==="header"  ? <FaSquare/> :
-                                           <FaWindowMinimize/>}
-              </button>
-            </div>
-
-            {/* Body (not in header‐only mode) */}
-            {tabletMode!=="header" && (
-              <div className="flex-1 p-4 overflow-auto flex flex-col">
-                {/* Aurora↔Echo */}
-                <PersonaToggle
-                  persona={persona}
-                  onChange={(p: "aurora"|"echo")=>setPersona(p)}
-                />
-
-                {/* Transcript */}
-                <textarea
-                  value={transcript}
-                  onChange={e=>setTranscript(e.target.value)}
-                  placeholder="Your transcript will appear here…"
-                  className="w-full p-3 mb-3 bg-white bg-opacity-20 rounded-lg text-sm text-charcoal resize-none h-24 focus:outline-none focus:ring-2 focus:ring-charcoal"
-                />
-
-                {/* GPT Reply */}
-                <div className="flex-1 p-3 mb-4 bg-white bg-opacity-20 rounded-lg text-sm text-charcoal overflow-auto ai-dialogue">
-                  {gptReply||"GPT reply will appear here…"}
-                </div>
-
-                {/* Controls */}
-                <div className="flex items-center gap-3 mb-3">
-                  <button
-                    onClick={handleMicClick}
-                    className={`flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float ${
-                      isRecording?"bg-opacity-10":""
-                    }`}
-                  >
-                    <FaMicrophone className="mr-2"/>{
-                      isRecording?"Stop Recording":"Start Recording"
-                    }
-                  </button>
-                  <button
-                    onClick={handleSendClick}
-                    className="flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float"
-                  >
-                    <FaPaperPlane className="mr-2"/>Send to GPT
-                  </button>
-                </div>
-
-                {/* Audio Meter */}
-                {isRecording && (
-                  <div className="w-full flex items-end gap-0.5 h-12">
-                    {freqData.map((lvl,i)=>(
-                      <div
-                        key={i}
-                        className="flex-1 bg-gradient-to-t from-charcoal to-paperCream rounded-sm transition-all"
-                        style={{ height:`${lvl*100}%` }}
-                      />
-                    ))}
+                <span className="text-lg font-semibold text-charcoal">
+                  {persona === "aurora" ? "Aurora" : persona === "echo" ? "Echo" : "GPT"}
+                </span>
+                <button
+                  onClick={cycleTabletMode}
+                  className="pencil-float text-charcoal hover:text-gray-800 transition-transform duration-200 active:scale-95"
+                  title={
+                    tabletMode === "normal" ? "Minimize to header" :
+                    tabletMode === "header" ? "Compact mode" :
+                    "Restore full"
+                  }
+                >
+                  {tabletMode === "compact" ? <FaWindowRestore /> :
+                    tabletMode === "header" ? <FaSquare /> :
+                      <FaWindowMinimize />}
+                </button>
+              </div>
+              {/* Body (not in header‐only mode) */}
+              {tabletMode !== "header" && (
+                <div className="flex-1 p-2 overflow-auto flex flex-col transition-all duration-300">
+                  <PersonaToggle
+                    persona={persona}
+                    onChange={(p: "aurora" | "echo") => setPersona(p)}
+                  />
+                  {/* Transcript */}
+                  <textarea
+                    value={transcript}
+                    onChange={e => setTranscript(e.target.value)}
+                    placeholder="Your transcript will appear here…"
+                    className="w-full p-3 mb-3 bg-white bg-opacity-20 rounded-lg text-sm text-charcoal resize-none h-24 focus:outline-none focus:ring-2 focus:ring-charcoal"
+                  />
+                  {/* GPT Reply */}
+                  <div className="flex-1 p-3 mb-4 bg-white bg-opacity-20 rounded-lg text-sm text-charcoal overflow-auto ai-dialogue">
+                    {gptReply || "GPT reply will appear here…"}
                   </div>
-                )}
-
-                {/* World-Building: Porticos List */}
-                <div className="mb-4">
-                  <h2 className="text-base font-bold text-charcoal mb-2 handwritten">Porticos</h2>
-                  <ul className="space-y-2">
-                    {palisade.porticos.map(portico => (
-                      <li key={portico.id} className="sketch-border bg-white bg-opacity-40 rounded p-2">
-                        <span className="font-semibold text-charcoal">{portico.title}</span>
-                        {/* Pillars List */}
-                        <ul className="ml-4 mt-2 space-y-1">
-                          {portico.pillars.map(pillar => (
-                            <li key={pillar.id} className="sketch-border bg-paperCream bg-opacity-60 rounded px-2 py-1">
-                              <span className="text-charcoal font-medium">{pillar.title}</span>
-                              {/* Bricks List */}
-                              <ul className="ml-4 mt-1 space-y-1">
-                                {pillar.bricks.map((brick) => (
-                                  <li key={brick.id} className="flex items-center gap-2 sketch-border bg-white bg-opacity-60 rounded p-1 relative">
-                                    {/* Sketched thumbnail with SVG overlay */}
-                                    <span className="relative w-12 h-12 block">
-                                      <Image
-                                        src={brick.thumbnailUrl}
-                                        alt={brick.title}
-                                        width={48}
-                                        height={48}
-                                        className="w-12 h-12 object-cover rounded border border-charcoal"
-                                        style={{ filter: 'grayscale(1) contrast(1.2) brightness(1.1)' }}
-                                        unoptimized
-                                      />
-                                      {/* SVG overlay for pencil sketch effect */}
-                                      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 48 48">
-                                        <filter id="sketch-lines" x="0" y="0">
-                                          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" result="turb"/>
-                                          <feDisplacementMap in2="turb" in="SourceGraphic" scale="2" xChannelSelector="R" yChannelSelector="G"/>
-                                        </filter>
-                                        <rect x="0" y="0" width="48" height="48" fill="none" stroke="#333" strokeWidth="1.5" filter="url(#sketch-lines)" />
-                                      </svg>
-                                    </span>
-                                    <div className="flex flex-col">
-                                      <span className="font-semibold text-charcoal text-xs">{brick.title}</span>
-                                      <span className="text-xs text-gray-600">{brick.author}</span>
-                                    </div>
-                                    {/* Hammer button */}
-                                    <button
-                                      className="ml-2 p-1 rounded sketch-border bg-paperCream hover:bg-yellow-100 transition pencil-float"
-                                      title="Generate contrarian snippets (Hammer)"
-                                      onClick={async () => {
-                                        // Call /api/hammer and update brick.contrarianSnippets
-                                        const res = await fetch('/api/hammer', {
-                                          method: 'POST',
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({ transcript: brick.transcript, title: brick.title }),
-                                        });
-                                        if (!res.ok) {
-                                          alert('Failed to generate contrarian snippets.');
-                                          return;
-                                        }
-                                        const { snippets } = await res.json();
-                                        setPalisade(p => ({
-                                          porticos: p.porticos.map(portico2 =>
-                                            portico2.id === portico.id
-                                              ? {
-                                                  ...portico2,
-                                                  pillars: portico2.pillars.map(pillar2 =>
-                                                    pillar2.id === pillar.id
-                                                      ? {
-                                                          ...pillar2,
-                                                          bricks: pillar2.bricks.map(b =>
-                                                            b.id === brick.id
-                                                              ? { ...b, contrarianSnippets: snippets || [] }
-                                                              : b
-                                                          ),
-                                                        }
-                                                      : pillar2
-                                                  ),
-                                                }
-                                              : portico2
-                                          ),
-                                        }));
-                                      }}
-                                    >
-                                      <Image src="/assets/hammer.png" alt="Hammer" width={20} height={20} className="w-5 h-5" unoptimized />
-                                    </button>
-                                    {/* Chisel button */}
-                                    <button
-                                      className="ml-2 p-1 rounded sketch-border bg-paperCream hover:bg-blue-100 transition pencil-float"
-                                      title="Refine this idea (Chisel)"
-                                      onClick={async () => {
-                                        // Call /api/chisel and update chiselResults for this brick
-                                        const res = await fetch('/api/chisel', {
-                                          method: 'POST',
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({
-                                            brick: { ...brick, contrarianSnippets: undefined },
-                                            pillar: { ...pillar, bricks: undefined },
-                                            portico: { ...portico, pillars: undefined }
-                                          }),
-                                        });
-                                        if (!res.ok) {
-                                          alert('Failed to refine with chisel.');
-                                          return;
-                                        }
-                                        const { snippets } = await res.json();
-                                        setChiselResults(r => ({ ...r, [brick.id]: snippets || [] }));
-                                      }}
-                                    >
-                                      <Image src="/assets/chisel.png" alt="Chisel" width={20} height={20} className="w-5 h-5" unoptimized />
-                                    </button>
-                                    {/* Float button */}
-                                    <button
-                                      className="ml-2 p-1 rounded sketch-border bg-paperCream hover:bg-green-100 transition pencil-float"
-                                      title="Float on this brick (YouTube playlist)"
-                                      onClick={async () => {
-                                        const minutes = parseInt(prompt('How many minutes do you want to float on this brick? (e.g. 20)') || '20', 10);
-                                        setFloatPlaylist({ contextId: brick.id, playlist: [] });
-                                        const res = await fetch('/api/float', {
-                                          method: 'POST',
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({
-                                            persona,
-                                            contextType: 'brick',
-                                            contextId: brick.id,
-                                            durationMinutes: minutes,
-                                            brick,
-                                            pillar,
-                                            portico
-                                          }),
-                                        });
-                                        if (!res.ok) {
-                                          alert('Failed to generate playlist.');
-                                          return;
-                                        }
-                                        const { playlist } = await res.json();
-                                        setFloatPlaylist({ contextId: brick.id, playlist });
-                                      }}
-                                    >
-                                      <Image src="/assets/float.png" alt="Float" width={20} height={20} className="w-5 h-5" unoptimized />
-                                    </button>
-                                    {/* Contrarian snippets UI (if any) */}
-                                    {brick.contrarianSnippets.length > 0 && (
-                                      <div className="absolute left-16 top-0 z-10 flex flex-col gap-1">
-                                        {brick.contrarianSnippets.map((snip, idx) => (
-                                          <div key={idx} className="sketch-border bg-yellow-50 bg-opacity-80 text-xs p-2 rounded shadow cursor-pointer hover:bg-yellow-100 transition">
-                                            <span className="font-bold">Contrarian:</span> {snip.summary}
-                                            <div className="text-[10px] text-gray-500 mt-1">Source: {snip.source}{snip.videoRef && ` (Ref: ${snip.videoRef})`}</div>
-                                            {/* Save to Pool button (to be implemented) */}
-                                            <button
-                                              className="mt-1 text-blue-700 underline text-[10px]"
-                                              onClick={() => setPorticoPools(pools => ({
-                                                ...pools,
-                                                [portico.id]: [...(pools[portico.id] || []), snip]
-                                              }))}
-                                            >
-                                              Save to Pool
-                                            </button>
-                                          </div>
-                                        ))}
+                  {/* Controls */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <button
+                      onClick={handleMicClick}
+                      className={`flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float ${
+                        isRecording ? "bg-opacity-10" : ""
+                      }`}
+                    >
+                      <FaMicrophone className="mr-2" />{
+                        isRecording ? "Stop Recording" : "Start Recording"
+                      }
+                    </button>
+                    <button
+                      onClick={handleSendClick}
+                      className="flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float"
+                    >
+                      <FaPaperPlane className="mr-2" />Send to GPT
+                    </button>
+                  </div>
+                  {/* Audio Meter */}
+                  {isRecording && (
+                    <div className="w-full flex items-end gap-0.5 h-12">
+                      {freqData.map((lvl, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 bg-gradient-to-t from-charcoal to-paperCream rounded-sm transition-all"
+                          style={{ height: `${lvl * 100}%` }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {/* World-Building: Porticos List */}
+                  <div className="mb-4">
+                    <h2 className="text-base font-bold text-charcoal mb-2 handwritten">Porticos</h2>
+                    <ul className="space-y-2">
+                      {palisade.porticos.map(portico => (
+                        <li key={portico.id} className="sketch-border bg-white bg-opacity-40 rounded p-2">
+                          <span className="font-semibold text-charcoal">{portico.title}</span>
+                          {/* Pillars List */}
+                          <ul className="ml-4 mt-2 space-y-1">
+                            {portico.pillars.map(pillar => (
+                              <li key={pillar.id} className="sketch-border bg-paperCream bg-opacity-60 rounded px-2 py-1">
+                                <span className="text-charcoal font-medium">{pillar.title}</span>
+                                {/* Bricks List */}
+                                <ul className="ml-4 mt-1 space-y-1">
+                                  {pillar.bricks.map((brick) => (
+                                    <li key={brick.id} className="flex items-center gap-2 sketch-border bg-white bg-opacity-60 rounded p-1 relative">
+                                      {/* Sketched thumbnail with SVG overlay */}
+                                      <span className="relative w-12 h-12 block">
+                                        <Image
+                                          src={brick.thumbnailUrl}
+                                          alt={brick.title}
+                                          width={48}
+                                          height={48}
+                                          className="w-12 h-12 object-cover rounded border border-charcoal"
+                                          style={{ filter: 'grayscale(1) contrast(1.2) brightness(1.1)' }}
+                                          unoptimized
+                                        />
+                                        {/* SVG overlay for pencil sketch effect */}
+                                        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 48 48">
+                                          <filter id="sketch-lines" x="0" y="0">
+                                            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" result="turb"/>
+                                            <feDisplacementMap in2="turb" in="SourceGraphic" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+                                          </filter>
+                                          <rect x="0" y="0" width="48" height="48" fill="none" stroke="#333" strokeWidth="1.5" filter="url(#sketch-lines)" />
+                                        </svg>
+                                      </span>
+                                      <div className="flex flex-col">
+                                        <span className="font-semibold text-charcoal text-xs">{brick.title}</span>
+                                        <span className="text-xs text-gray-600">{brick.author}</span>
                                       </div>
-                                    )}
-                                    {/* Chisel results UI (if any) */}
-                                    {chiselResults[brick.id]?.length > 0 && (
-                                      <div className="absolute left-16 top-20 z-10 flex flex-col gap-1">
-                                        {chiselResults[brick.id].map((snip, idx) => (
-                                          <div key={idx} className="sketch-border bg-blue-50 bg-opacity-80 text-xs p-2 rounded shadow cursor-pointer hover:bg-blue-100 transition">
-                                            <span className="font-bold">Refined:</span> {snip.summary}
-                                            <div className="text-[10px] text-gray-500 mt-1">Source: {snip.source}{snip.videoRef && ` (Ref: ${snip.videoRef})`}</div>
-                                            <button
-                                              className="mt-1 text-blue-700 underline text-[10px] mr-2"
-                                              onClick={() => setPalisade(p => ({
-                                                porticos: p.porticos.map(portico2 =>
-                                                  portico2.id === portico.id ? {
+                                      {/* Hammer button */}
+                                      <button
+                                        className="ml-2 p-1 rounded sketch-border bg-paperCream hover:bg-yellow-100 transition pencil-float"
+                                        title="Generate contrarian snippets (Hammer)"
+                                        onClick={async () => {
+                                          // Call /api/hammer and update brick.contrarianSnippets
+                                          const res = await fetch('/api/hammer', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ transcript: brick.transcript, title: brick.title }),
+                                          });
+                                          if (!res.ok) {
+                                            alert('Failed to generate contrarian snippets.');
+                                            return;
+                                          }
+                                          const { snippets } = await res.json();
+                                          setPalisade(p => ({
+                                            porticos: p.porticos.map(portico2 =>
+                                              portico2.id === portico.id
+                                                ? {
                                                     ...portico2,
                                                     pillars: portico2.pillars.map(pillar2 =>
-                                                      pillar2.id === pillar.id ? {
-                                                        ...pillar2,
-                                                        bricks: pillar2.bricks.map(b =>
-                                                          b.id === brick.id ? {
-                                                            ...b,
-                                                            contrarianSnippets: [...b.contrarianSnippets, snip]
-                                                          } : b
-                                                        )
-                                                      } : pillar2
-                                                    )
-                                                  } : portico2
-                                                )
-                                              }))}
-                                            >Save to Brick</button>
-                                            <button
-                                              className="mt-1 text-blue-700 underline text-[10px]"
-                                              onClick={() => setPorticoPools(pools => ({
-                                                ...pools,
-                                                [portico.id]: [...(pools[portico.id] || []), snip]
-                                              }))}
-                                            >Save to Pool</button>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </li>
-                                ))}
-                              </ul>
-                              {/* Cap bricks per pillar at 10 */}
-                              <div className="flex gap-2 mt-1">
-                                <button
-                                  onClick={() => {
-                                    if (pillar.bricks.length >= 10) {
-                                      alert("A pillar can have up to 10 bricks. Please remove an existing brick before adding a new one.");
-                                      return;
-                                    }
-                                    const youtubeUrl = prompt("Enter YouTube URL:");
-                                    if (youtubeUrl) {
-                                      addBrickToPillar(portico.id, pillar.id, youtubeUrl);
-                                    }
-                                  }}
-                                  className="flex-1 py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white"
-                                >
-                                  Add Brick (YouTube)
-                                </button>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                        {/* Pool of saved contrarian snippets for this portico */}
-                        <div className="mt-4">
-                          <h3 className="text-xs font-bold text-charcoal mb-1">Contrarian Snippet Pool</h3>
-                          <div className="flex flex-col gap-1">
-                            {(porticoPools[portico.id]?.length ?? 0) === 0 && (
-                              <div className="text-xs text-gray-400 italic">No snippets saved yet.</div>
-                            )}
-                            {(porticoPools[portico.id] || []).map((snip, idx) => (
-                              <div key={idx} className="sketch-border bg-yellow-100 bg-opacity-80 text-xs p-2 rounded shadow">
-                                <span className="font-bold">Contrarian:</span> {snip.summary}
-                                <div className="text-[10px] text-gray-500 mt-1">Source: {snip.source}{snip.videoRef && ` (Ref: ${snip.videoRef})`}</div>
-                              </div>
+                                                      pillar2.id === pillar.id
+                                                        ? {
+                                                            ...pillar2,
+                                                            bricks: pillar2.bricks.map(b =>
+                                                              b.id === brick.id
+                                                                ? { ...b, contrarianSnippets: snippets || [] }
+                                                                : b
+                                                            ),
+                                                          }
+                                                        : pillar2
+                                                    ),
+                                                  }
+                                                : portico2
+                                            ),
+                                          }));
+                                        }}
+                                      >
+                                        <Image src="/assets/hammer.png" alt="Hammer" width={20} height={20} className="w-5 h-5" unoptimized />
+                                      </button>
+                                      {/* Chisel button */}
+                                      <button
+                                        className="ml-2 p-1 rounded sketch-border bg-paperCream hover:bg-blue-100 transition pencil-float"
+                                        title="Refine this idea (Chisel)"
+                                        onClick={async () => {
+                                          // Call /api/chisel and update chiselResults for this brick
+                                          const res = await fetch('/api/chisel', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                              brick: { ...brick, contrarianSnippets: undefined },
+                                              pillar: { ...pillar, bricks: undefined },
+                                              portico: { ...portico, pillars: undefined }
+                                            }),
+                                          });
+                                          if (!res.ok) {
+                                            alert('Failed to refine with chisel.');
+                                            return;
+                                          }
+                                          const { snippets } = await res.json();
+                                          setChiselResults(r => ({ ...r, [brick.id]: snippets || [] }));
+                                        }}
+                                      >
+                                        <Image src="/assets/chisel.png" alt="Chisel" width={20} height={20} className="w-5 h-5" unoptimized />
+                                      </button>
+                                      {/* Float button */}
+                                      <button
+                                        className="ml-2 p-1 rounded sketch-border bg-paperCream hover:bg-green-100 transition pencil-float"
+                                        title="Float on this brick (YouTube playlist)"
+                                        onClick={async () => {
+                                          const minutes = parseInt(prompt('How many minutes do you want to float on this brick? (e.g. 20)') || '20', 10);
+                                          setFloatPlaylist({ contextId: brick.id, playlist: [] });
+                                          const res = await fetch('/api/float', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                              persona,
+                                              contextType: 'brick',
+                                              contextId: brick.id,
+                                              durationMinutes: minutes,
+                                              brick,
+                                              pillar,
+                                              portico
+                                            }),
+                                          });
+                                          if (!res.ok) {
+                                            alert('Failed to generate playlist.');
+                                            return;
+                                          }
+                                          const { playlist } = await res.json();
+                                          setFloatPlaylist({ contextId: brick.id, playlist });
+                                        }}
+                                      >
+                                        <Image src="/assets/float.png" alt="Float" width={20} height={20} className="w-5 h-5" unoptimized />
+                                      </button>
+                                      {/* Contrarian snippets UI (if any) */}
+                                      {brick.contrarianSnippets.length > 0 && (
+                                        <div className="absolute left-16 top-0 z-10 flex flex-col gap-1">
+                                          {brick.contrarianSnippets.map((snip, idx) => (
+                                            <div key={idx} className="sketch-border bg-yellow-50 bg-opacity-80 text-xs p-2 rounded shadow cursor-pointer hover:bg-yellow-100 transition">
+                                              <span className="font-bold">Contrarian:</span> {snip.summary}
+                                              <div className="text-[10px] text-gray-500 mt-1">Source: {snip.source}{snip.videoRef && ` (Ref: ${snip.videoRef})`}</div>
+                                              {/* Save to Pool button (to be implemented) */}
+                                              <button
+                                                className="mt-1 text-blue-700 underline text-[10px]"
+                                                onClick={() => setPorticoPools(pools => ({
+                                                  ...pools,
+                                                  [portico.id]: [...(pools[portico.id] || []), snip]
+                                                }))}
+                                              >
+                                                Save to Pool
+                                              </button>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                      {/* Chisel results UI (if any) */}
+                                      {chiselResults[brick.id]?.length > 0 && (
+                                        <div className="absolute left-16 top-20 z-10 flex flex-col gap-1">
+                                          {chiselResults[brick.id].map((snip, idx) => (
+                                            <div key={idx} className="sketch-border bg-blue-50 bg-opacity-80 text-xs p-2 rounded shadow cursor-pointer hover:bg-blue-100 transition">
+                                              <span className="font-bold">Refined:</span> {snip.summary}
+                                              <div className="text-[10px] text-gray-500 mt-1">Source: {snip.source}{snip.videoRef && ` (Ref: ${snip.videoRef})`}</div>
+                                              <button
+                                                className="mt-1 text-blue-700 underline text-[10px] mr-2"
+                                                onClick={() => setPalisade(p => ({
+                                                  porticos: p.porticos.map(portico2 =>
+                                                    portico2.id === portico.id ? {
+                                                      ...portico2,
+                                                      pillars: portico2.pillars.map(pillar2 =>
+                                                        pillar2.id === pillar.id ? {
+                                                          ...pillar2,
+                                                          bricks: pillar2.bricks.map(b =>
+                                                            b.id === brick.id ? {
+                                                              ...b,
+                                                              contrarianSnippets: [...b.contrarianSnippets, snip]
+                                                            } : b
+                                                          )
+                                                        } : pillar2
+                                                      )
+                                                    } : portico2
+                                                  )
+                                                }))}
+                                              >Save to Brick</button>
+                                              <button
+                                                className="mt-1 text-blue-700 underline text-[10px]"
+                                                onClick={() => setPorticoPools(pools => ({
+                                                  ...pools,
+                                                  [portico.id]: [...(pools[portico.id] || []), snip]
+                                                }))}
+                                              >Save to Pool</button>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </li>
+                                  ))}
+                                </ul>
+                                {/* Cap bricks per pillar at 10 */}
+                                <div className="flex gap-2 mt-1">
+                                  <button
+                                    onClick={() => {
+                                      if (pillar.bricks.length >= 10) {
+                                        alert("A pillar can have up to 10 bricks. Please remove an existing brick before adding a new one.");
+                                        return;
+                                      }
+                                      const youtubeUrl = prompt("Enter YouTube URL:");
+                                      if (youtubeUrl) {
+                                        addBrickToPillar(portico.id, pillar.id, youtubeUrl);
+                                      }
+                                    }}
+                                    className="flex-1 py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white"
+                                  >
+                                    Add Brick (YouTube)
+                                  </button>
+                                </div>
+                              </li>
                             ))}
+                          </ul>
+                          {/* Pool of saved contrarian snippets for this portico */}
+                          <div className="mt-4">
+                            <h3 className="text-xs font-bold text-charcoal mb-1">Contrarian Snippet Pool</h3>
+                            <div className="flex flex-col gap-1">
+                              {(porticoPools[portico.id]?.length ?? 0) === 0 && (
+                                <div className="text-xs text-gray-400 italic">No snippets saved yet.</div>
+                              )}
+                              {(porticoPools[portico.id] || []).map((snip, idx) => (
+                                <div key={idx} className="sketch-border bg-yellow-100 bg-opacity-80 text-xs p-2 rounded shadow">
+                                  <span className="font-bold">Contrarian:</span> {snip.summary}
+                                  <div className="text-[10px] text-gray-500 mt-1">Source: {snip.source}{snip.videoRef && ` (Ref: ${snip.videoRef})`}</div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                        {/* Cap pillars per portico at 5 */}
-                        <div className="flex gap-2 mt-2">
-                          <button
-                            onClick={() => {
-                              if (portico.pillars.length >= 5) {
-                                alert("A portico can have up to 5 pillars. Please remove an existing pillar before adding a new one.");
-                                return;
-                              }
-                              const title = prompt("Enter pillar title:");
-                              if (title) {
-                                addPillarToPortico(portico.id, title);
-                              }
-                            }}
-                            className="flex-1 py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white"
-                          >
-                            Add Pillar
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                          {/* Cap pillars per portico at 5 */}
+                          <div className="flex gap-2 mt-2">
+                            <button
+                              onClick={() => {
+                                if (portico.pillars.length >= 5) {
+                                  alert("A portico can have up to 5 pillars. Please remove an existing pillar before adding a new one.");
+                                  return;
+                                }
+                                const title = prompt("Enter pillar title:");
+                                if (title) {
+                                  addPillarToPortico(portico.id, title);
+                                }
+                              }}
+                              className="flex-1 py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white"
+                            >
+                              Add Pillar
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
+              )}
+            </div>
+            {/* Toolbar attached to tablet, right side */}
+            {tabletMode !== "compact" ? (
+              <div className="tablet-toolbar absolute right-0 top-0 h-full flex items-center z-20 pointer-events-auto">
+                <ToolsPanel tools={tools} />
               </div>
+            ) : (
+              <button
+                className="absolute right-2 top-2 z-30 bg-transparent border-none p-0"
+                onClick={() => setTabletMode("normal")}
+                title="Show tools"
+              >
+                <Image src="/assets/tools-icon.png" alt="Tools" width={32} height={32} />
+              </button>
             )}
           </div>
         </Rnd>
