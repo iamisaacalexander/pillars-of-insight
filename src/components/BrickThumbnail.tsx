@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface BrickThumbnailProps {
   title: string;
@@ -16,7 +17,13 @@ export function BrickThumbnail({
       className="sketch-border p-2 cursor-pointer transition-all hover:shadow-lg pencil-float bg-paperCream"
       onClick={onClick}
     >
-      <img src={thumbnailUrl} alt={title} className="rounded-sm w-full" />
+      <Image
+        src={thumbnailUrl}
+        alt={title}
+        className="rounded-sm w-full"
+        width={400}
+        height={225}
+      />
       <p className="mt-2 text-sm relative inline-block text-charcoal">
         <svg className="absolute inset-0 w-full h-full">
           <line
