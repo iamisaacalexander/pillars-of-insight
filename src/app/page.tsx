@@ -34,7 +34,7 @@ export default function Home() {
   const [toolsOpen, setToolsOpen]   = useState(false);
 
   // ─── Persona ────────────────────────────────────────────────────────
-  const [persona, setPersona]       = useState<"aurora"|"echo">("aurora");
+  const [persona] = useState<"aurora"|"echo">("aurora");
 
   // ─── Audio Refs ─────────────────────────────────────────────────────
   const mediaRecorderRef = useRef<MediaRecorder|null>(null);
@@ -175,9 +175,6 @@ export default function Home() {
   // ─── World State ──────────────────────────────────────────────────
   const [palisade, setPalisade] = useState<Palisade>({ porticos: [] });
 
-  // ─── Pool State (per portico) ──────────────────────────────────────
-  const [porticoPools, setPorticoPools] = useState<Record<string, ContrarianSnippet[]>>({});
-
   // ─── Add Portico (Manual & AI) ─────────────────────────────────────
   const addPortico = async (title?: string) => {
     let newTitle = title;
@@ -205,36 +202,6 @@ export default function Home() {
         ...p.porticos,
         { id: Date.now().toString(), title: newTitle!, pillars: [] }
       ]
-    }));
-  };
-
-  // ─── Add Pillar (Manual & AI) ─────────────────────────────────────
-  const addPillarToPortico = async (porticoId: string, title?: string) => {
-    let newTitle = title;
-    if (!newTitle) {
-      setGptReply("💡 Suggesting a pillar title…");
-      try {
-        const res = await fetch("/api/gpt", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: `Suggest a creative title for a new pillar (supporting idea) in the portico '${palisade.porticos.find(p=>p.id===porticoId)?.title || ''}'.`,
-            system: systemPrompts[persona]
-          }),
-        });
-        const { reply } = await res.json();
-        newTitle = reply || "Untitled Pillar";
-      } catch {
-        newTitle = "Untitled Pillar";
-      }
-      setGptReply("");
-    }
-    setPalisade(p => ({
-      porticos: p.porticos.map(portico =>
-        portico.id === porticoId
-          ? { ...portico, pillars: [...portico.pillars, { id: Date.now().toString(), title: newTitle!, bricks: [] }] }
-          : portico
-      )
     }));
   };
 
