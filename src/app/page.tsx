@@ -281,7 +281,7 @@ export default function Home() {
         ),
       }));
       setGptReply("");
-    } catch (err) {
+    } catch {
       setGptReply("❗ Error fetching video info or transcript.");
     }
   };
@@ -316,7 +316,6 @@ export default function Home() {
 
   // Add float state for playlist results
   const [floatPlaylist, setFloatPlaylist] = useState<{ contextId: string, playlist: any[] } | null>(null);
-  const [floatLoading, setFloatLoading] = useState(false);
 
   return (
     <>
@@ -438,15 +437,18 @@ export default function Home() {
                               <span className="text-charcoal font-medium">{pillar.title}</span>
                               {/* Bricks List */}
                               <ul className="ml-4 mt-1 space-y-1">
-                                {pillar.bricks.map((brick, i) => (
+                                {pillar.bricks.map((brick) => (
                                   <li key={brick.id} className="flex items-center gap-2 sketch-border bg-white bg-opacity-60 rounded p-1 relative">
                                     {/* Sketched thumbnail with SVG overlay */}
                                     <span className="relative w-12 h-12 block">
-                                      <img
+                                      <Image
                                         src={brick.thumbnailUrl}
                                         alt={brick.title}
+                                        width={48}
+                                        height={48}
                                         className="w-12 h-12 object-cover rounded border border-charcoal"
                                         style={{ filter: 'grayscale(1) contrast(1.2) brightness(1.1)' }}
+                                        unoptimized
                                       />
                                       {/* SVG overlay for pencil sketch effect */}
                                       <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 48 48">
@@ -533,7 +535,7 @@ export default function Home() {
                                       title="Float on this brick (YouTube playlist)"
                                       onClick={async () => {
                                         const minutes = parseInt(prompt('How many minutes do you want to float on this brick? (e.g. 20)') || '20', 10);
-                                        setFloatLoading(true);
+                                        setFloatPlaylist({ contextId: brick.id, playlist: [] });
                                         const res = await fetch('/api/float', {
                                           method: 'POST',
                                           headers: { 'Content-Type': 'application/json' },
@@ -547,7 +549,6 @@ export default function Home() {
                                             portico
                                           }),
                                         });
-                                        setFloatLoading(false);
                                         if (!res.ok) {
                                           alert('Failed to generate playlist.');
                                           return;

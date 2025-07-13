@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       snippets = [];
     }
     return NextResponse.json({ snippets });
-  } catch (err) {
-    return NextResponse.json({ error: 'Unexpected hammer server error' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: 'Unexpected server error' }, { status: 500 });
   }
 }

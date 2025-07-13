@@ -49,17 +49,18 @@ Respond as a JSON array of objects: [{ summary: string, source: string, videoRef
     }
 
     const data = await response.json();
-    let snippets: any[] = [];
+    type Snippet = { summary: string; source: string; videoRef?: string };
+    let snippets: Snippet[] = [];
     try {
       // Try to parse the JSON array from the model's reply
       const reply = data.choices?.[0]?.message?.content?.trim();
-      snippets = JSON.parse(reply);
+      snippets = JSON.parse(reply) as Snippet[];
     } catch {
       // fallback: return the raw reply as a single snippet
       snippets = [{ summary: data.choices?.[0]?.message?.content?.trim() || 'No summary', source: 'AI' }];
     }
     return NextResponse.json({ snippets });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Unexpected server error' }, { status: 500 });
   }
 }

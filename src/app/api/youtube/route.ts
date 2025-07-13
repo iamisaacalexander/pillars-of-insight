@@ -24,6 +24,9 @@ async function fetchYouTubeMetadata(videoId: string) {
   };
 }
 
+// Define TranscriptSegment type
+type TranscriptSegment = { text: string };
+
 // Fetch transcript using youtube-transcript-api (or similar service)
 async function fetchYouTubeTranscript(videoId: string): Promise<string> {
   // For production, use a real transcript API or service
@@ -34,7 +37,7 @@ async function fetchYouTubeTranscript(videoId: string): Promise<string> {
   if (!res.ok) return '';
   const data = await res.json();
   if (Array.isArray(data)) {
-    return data.map((seg: any) => seg.text).join(' ');
+    return (data as TranscriptSegment[]).map((seg) => seg.text).join(' ');
   } else if (typeof data.transcript === 'string') {
     return data.transcript;
   }

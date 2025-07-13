@@ -42,15 +42,16 @@ export async function POST(req: Request) {
     }
 
     const data = await response.json();
-    let playlist: any[] = [];
+    type PlaylistVideo = { title: string; url: string; channel: string; duration: string; why: string };
+    let playlist: PlaylistVideo[] = [];
     try {
       const reply = data.choices?.[0]?.message?.content?.trim();
-      playlist = JSON.parse(reply);
+      playlist = JSON.parse(reply) as PlaylistVideo[];
     } catch {
       playlist = [{ title: 'Could not parse playlist', url: '', channel: '', duration: '', why: data.choices?.[0]?.message?.content?.trim() || '' }];
     }
     return NextResponse.json({ playlist });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Unexpected server error' }, { status: 500 });
   }
 }
