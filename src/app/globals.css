@@ -19,8 +19,32 @@
   }
 }
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Cream-paper background + charcoal text */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: url('/paper-texture.png') #f7f2eb;
+  background-size: 200px;
+  color: #333333;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Floating “pencil” wiggle */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+.pencil-float:hover {
+  animation: float 2s ease-in-out infinite;
+}
+
+/* Sketch-underline draw animation */
+@keyframes dash {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0; }
+}
+.animate-dash {
+  animation: dash 0.8s forwards;
 }
