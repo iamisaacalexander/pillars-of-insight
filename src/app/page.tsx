@@ -44,8 +44,9 @@ export default function Home() {
   // — Audio recording + meter effect
   useEffect(() => {
     if (!isRecording) {
-      mediaRecorderRef.current?.state !== "inactive" &&
+      if (mediaRecorderRef.current?.state !== "inactive") {
         mediaRecorderRef.current?.stop();
+      }
       cancelAnimationFrame(rafRef.current);
       setFreqData([]);
       return;
