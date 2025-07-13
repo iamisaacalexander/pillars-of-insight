@@ -81,7 +81,7 @@ export default function Home() {
       mr.onstop = async () => {
         cancelAnimationFrame(rafRef.current);
         try {
-          if (audioCtxRef.current?.state !== 'closed') {
+          if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
             await audioCtxRef.current.close();
           }
         } catch {}
