@@ -30,9 +30,6 @@ export default function Home() {
   const [prevSize, setPrevSize]     = useState(size);
   const [position, setPosition]     = useState({ x: 100, y: 120 });
 
-  // ─── Toolbar State ──────────────────────────────────────────────────
-  const [toolsOpen, setToolsOpen]   = useState(false);
-
   // ─── Persona ────────────────────────────────────────────────────────
   const [persona] = useState<"aurora"|"echo">("aurora");
 
@@ -192,7 +189,7 @@ export default function Home() {
       </header>
 
       {/* ─── Sliding Tools Panel ──────────────────────────────────── */}
-      {toolsOpen && <ToolsPanel tools={tools} />}
+      {/* Removed toolsOpen conditional ToolsPanel rendering */}
 
       {/* ─── Main Draggable Tablet ────────────────────────────────── */}
       <main className="w-full h-screen bg-offWhite overflow-hidden flex items-center justify-center">
