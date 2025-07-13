@@ -43,7 +43,10 @@ export default function Home() {
   // handle record + meter
   useEffect(() => {
     if (!isRecording) {
-      mediaRecorderRef.current?.state !== 'inactive' && mediaRecorderRef.current?.stop();
+      // Stop recorder & meter
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
       cancelAnimationFrame(rafRef.current);
       setFreqData([]);
       return;
