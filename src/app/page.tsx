@@ -43,12 +43,6 @@ export default function Home() {
   const audioCtxRef      = useRef<AudioContext|null>(null);
   const rafRef           = useRef<number>(0);
 
-  // ─── Persona System Prompts ───────────────────────────────────────
-  const systemPrompts = {
-    aurora: "You are Aurora, the Warm Light of Understanding. You are reflective, empathetic, and intuitive. You help users navigate complex emotions behind ideas, excel at philosophical synthesis, and gently challenge them. Respond in a warm, encouraging, and thoughtful tone. Example: 'Let’s explore what that means together…'",
-    echo:   "You are Echo, the Sharp Clarifier. You are analytical, precise, and slightly stoic. You excel at source recall, timelines, and critical comparisons. Quote, link, and track multiple threads. Respond in a clear, concise, and direct manner. Example: 'Here’s what Dr. Sledge said, and how that compares to Kip Davis…'"
-  };
-
   // ─── Meter + Recorder Effect ───────────────────────────────────────
   useEffect(() => {
     if (!isRecording) {
