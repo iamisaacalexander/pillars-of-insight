@@ -11,7 +11,7 @@ import {
   FaWindowRestore,
 } from "react-icons/fa";
 import { ToolsPanel, Tool } from "@/components/ToolsPanel";
-import PersonaToggle from "@/components/PersonaToggle";
+import PersonaToggle from "../components/PersonaToggle";
 
 const HEADER_BAR_HEIGHT = 48;
 const METER_BARS = 32;
