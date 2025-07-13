@@ -165,18 +165,20 @@ export default function Home() {
           minWidth={80}
           minHeight={HEADER_BAR_HEIGHT}
         >
-          <div className="flex flex-col bg-gray-900 rounded-2xl shadow-2xl backdrop-blur-xl bg-opacity-60 h-full">
+          <div
+            className="sketch-border flex flex-col bg-paperCream rounded-2xl shadow-xl h-full"
+          >
             {/* title bar */}
             <div
-              className="flex items-center justify-between px-4 cursor-move select-none bg-gray-800 rounded-t-2xl"
+              className="flex items-center justify-between px-4 cursor-move select-none bg-transparent rounded-t-2xl"
               style={{ height: HEADER_BAR_HEIGHT }}
             >
-              <span className="text-lg font-semibold text-white">
+              <span className="text-lg font-semibold text-charcoal">
                 🧠 Tablet Guide
               </span>
               <button
                 onClick={cycleTabletMode}
-                className="text-gray-300 hover:text-white"
+                className="text-charcoal hover:text-white pencil-float"
                 title={
                   tabletMode === 'normal'
                     ? 'Minimize to header'
@@ -198,20 +200,18 @@ export default function Home() {
                   value={transcript}
                   onChange={e => setTranscript(e.target.value)}
                   placeholder="🎙️ Your transcript will appear here…"
-                  className="w-full p-3 mb-3 bg-gray-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none h-24"
+                  className="w-full p-3 mb-3 bg-white bg-opacity-20 rounded-lg text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-charcoal resize-none h-24"
                 />
 
-                <div className="flex-1 p-3 mb-4 bg-gray-700 rounded-lg text-sm text-blue-200 overflow-auto">
+                <div className="flex-1 p-3 mb-4 bg-white bg-opacity-20 rounded-lg text-sm text-charcoal overflow-auto">
                   {gptReply || '🤖 GPT reply will appear here…'}
                 </div>
 
                 <div className="flex items-center gap-3 mb-3">
                   <button
                     onClick={handleMicClick}
-                    className={`flex-1 flex items-center justify-center py-2 px-4 rounded-lg font-semibold transition ${
-                      isRecording
-                        ? 'bg-red-600 hover:bg-red-700'
-                        : 'bg-blue-600 hover:bg-blue-700'
+                    className={`flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float ${
+                      isRecording ? 'bg-opacity-10' : ''
                     }`}
                   >
                     <FaMicrophone className="mr-2" />
@@ -219,7 +219,7 @@ export default function Home() {
                   </button>
                   <button
                     onClick={handleSendClick}
-                    className="flex-1 flex items-center justify-center py-2 px-4 bg-green-600 rounded-lg font-semibold transition hover:bg-green-700"
+                    className="flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float"
                   >
                     <FaPaperPlane className="mr-2" />
                     Send to GPT
@@ -232,7 +232,7 @@ export default function Home() {
                     {freqData.map((lvl, i) => (
                       <div
                         key={i}
-                        className="flex-1 bg-gradient-to-t from-purple-500 to-blue-500 rounded-sm transition-all"
+                        className="flex-1 bg-gradient-to-t from-charcoal to-paperCream rounded-sm transition-all"
                         style={{ height: `${lvl*100}%`, minWidth: 2 }}
                       />
                     ))}
