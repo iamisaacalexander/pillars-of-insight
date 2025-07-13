@@ -6,8 +6,9 @@ export async function POST(req: Request) {
   try {
     // Parse multipart form data
     const formData = await req.formData();
-    const audio = formData.get('audio');
-    if (!audio || !(audio instanceof Blob)) {
+    // Accept both 'file' and 'audio' keys for compatibility
+    const file = formData.get('file') || formData.get('audio');
+    if (!file || !(file instanceof File)) {
       return NextResponse.json({ error: 'No audio file provided' }, { status: 400 });
     }
 
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
 
     // Prepare form data for OpenAI Whisper
     const openaiForm = new FormData();
-    openaiForm.append('file', audio, 'recording.webm');
+    openaiForm.append('file', file, 'recording.webm');
     openaiForm.append('model', 'whisper-1');
     openaiForm.append('response_format', 'text');
     // Optionally: openaiForm.append('language', 'en');
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
     }
 
     const transcript = await response.text();
-    return NextResponse.json({ transcript });
+    return NextResponse.json({ text: transcript });
   } catch (err) {
     console.error('Whisper server error:', err);
     return NextResponse.json({ error: 'Unexpected Whisper server error' }, { status: 500 });
