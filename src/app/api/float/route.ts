@@ -5,7 +5,7 @@ export const runtime = 'edge';
 
 export async function POST(req: Request) {
   try {
-    const { persona, contextType, contextId, durationMinutes, brick, pillar, portico } = await req.json();
+    const { persona, contextType: _contextType, contextId: _contextId, durationMinutes, brick, pillar, portico } = await req.json();
     // Compose a prompt for GPT-4 to act as Aurora or Echo and create a YouTube playlist
     const personaPrompt = persona === 'echo'
       ? 'You are Echo, the Sharp Clarifier. You are analytical, precise, and slightly stoic. You excel at source recall, timelines, and critical comparisons. Quote, link, and track multiple threads. Respond in a clear, concise, and direct manner.'
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
       playlist = [{ title: 'Could not parse playlist', url: '', channel: '', duration: '', why: data.choices?.[0]?.message?.content?.trim() || '' }];
     }
     return NextResponse.json({ playlist });
-  } catch {
+  } catch (err) {
     return NextResponse.json({ error: 'Unexpected server error' }, { status: 500 });
   }
 }

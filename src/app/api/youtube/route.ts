@@ -60,7 +60,8 @@ export async function POST(req: Request) {
       thumbnailUrl: meta.thumbnailUrl,
       transcript,
     });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch YouTube info' }, { status: 500 });
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : 'Failed to fetch YouTube info';
+    return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
 }

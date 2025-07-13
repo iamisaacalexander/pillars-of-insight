@@ -315,7 +315,15 @@ export default function Home() {
   const [chiselResults, setChiselResults] = useState<Record<string, ContrarianSnippet[]>>({});
 
   // Add float state for playlist results
-  const [floatPlaylist, setFloatPlaylist] = useState<{ contextId: string, playlist: any[] } | null>(null);
+  // Define a type for float playlist videos
+  type FloatVideo = {
+    url: string;
+    title: string;
+    channel: string;
+    duration: string;
+    why: string;
+  };
+  const [floatPlaylist, setFloatPlaylist] = useState<{ contextId: string, playlist: FloatVideo[] } | null>(null);
 
   return (
     <>
@@ -502,7 +510,7 @@ export default function Home() {
                                         }));
                                       }}
                                     >
-                                      <img src="/assets/hammer.png" alt="Hammer" className="w-5 h-5" />
+                                      <Image src="/assets/hammer.png" alt="Hammer" width={20} height={20} className="w-5 h-5" unoptimized />
                                     </button>
                                     {/* Chisel button */}
                                     <button
@@ -527,7 +535,7 @@ export default function Home() {
                                         setChiselResults(r => ({ ...r, [brick.id]: snippets || [] }));
                                       }}
                                     >
-                                      <img src="/assets/chisel.png" alt="Chisel" className="w-5 h-5" />
+                                      <Image src="/assets/chisel.png" alt="Chisel" width={20} height={20} className="w-5 h-5" unoptimized />
                                     </button>
                                     {/* Float button */}
                                     <button
@@ -557,7 +565,7 @@ export default function Home() {
                                         setFloatPlaylist({ contextId: brick.id, playlist });
                                       }}
                                     >
-                                      <img src="/assets/float.png" alt="Float" className="w-5 h-5" />
+                                      <Image src="/assets/float.png" alt="Float" width={20} height={20} className="w-5 h-5" unoptimized />
                                     </button>
                                     {/* Contrarian snippets UI (if any) */}
                                     {brick.contrarianSnippets.length > 0 && (
