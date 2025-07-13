@@ -23,7 +23,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         {/* SVG filter for .sketch-border rough edges */}
         <svg width="0" height="0">
           <filter id="roughen">
@@ -42,6 +44,7 @@ export default function RootLayout({
             />
           </filter>
         </svg>
+
         {children}
       </body>
     </html>

@@ -1,26 +1,12 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #333333;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 /* Cream-paper background + charcoal text */
 body {
-  background: url('/paper-texture.png') #f7f2eb;
-  background-size: 200px;
-  color: var(--foreground);
+  background: url("/assets/paper-texture.png") #f7f2eb;
+  background-size: cover;
+  color: #333333;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
