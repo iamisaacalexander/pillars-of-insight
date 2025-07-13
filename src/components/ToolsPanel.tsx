@@ -21,8 +21,8 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
   className = "",
 }) => (
   <div
-    className={`relative flex ${vertical ? "flex-col" : "flex-row"} items-center justify-center" ${className}`.trim()}
-    style={{ width: vertical ? 64 : undefined, height: vertical ? 320 : undefined }}
+    className={`relative flex ${vertical ? "flex-col" : "flex-row"} items-center justify-center ${className}`.trim()}
+    style={{ width: 64, height: 320, background: 'none', boxShadow: 'none', margin: 0, padding: 0 }}
   >
     {/* Toolbar PNG background */}
     <Image
@@ -31,11 +31,12 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
       width={64}
       height={320}
       className="absolute left-0 top-0 w-16 h-80 pointer-events-none select-none"
+      style={{ zIndex: 1 }}
       draggable={false}
       priority
     />
-    {/* Tool icons stacked vertically, no boxes */}
-    <div className="relative flex flex-col items-center justify-center gap-2 z-10 mt-4">
+    {/* Tool icons stacked vertically, centered */}
+    <div className="relative flex flex-col items-center justify-center gap-4 z-10" style={{ height: '100%', marginTop: 0 }}>
       {tools.map(tool => (
         <button
           key={tool.id}

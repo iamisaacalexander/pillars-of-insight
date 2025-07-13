@@ -55,34 +55,43 @@ body::after {
 }
 
 .tablet-toolbar {
-  /* Visually hug the right edge of the tablet PNG, overlaying the edge */
-  margin-right: -8px; /* Adjust as needed for pixel-perfect fit */
+  margin-right: -8px;
   box-shadow: -4px 0 12px 0 rgba(44, 41, 38, 0.10);
-  /* Optional: sketchy border effect */
   border-left: 2px dashed #222;
   border-radius: 0 12px 12px 0;
-  background: rgba(255,255,255,0.01); /* subtle overlay for blending */
+  background: none;
   transition: margin 0.3s cubic-bezier(.77,0,.18,1), box-shadow 0.3s;
+  padding: 0;
+  width: 64px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tablet-content {
-  padding: 44px 36px 36px 36px; /* Adjust for PNG fit */
+  padding: 24px !important;
   max-width: 680px;
   margin: 0 auto;
   min-height: 520px;
-  /* Optional: add a sketchy border or shadow for hand-drawn look */
+  background: none;
   box-shadow: 0 2px 24px 0 rgba(44, 41, 38, 0.08);
   border-radius: 18px;
-  /* ...other styles as needed... */
 }
 
-/* Mini-tablet floating tool icon: organic transition */
-button[title="Show tools"] {
-  filter: drop-shadow(0 2px 8px rgba(44,41,38,0.12));
-  border-radius: 50%;
-  transition: transform 0.25s cubic-bezier(.77,0,.18,1), box-shadow 0.25s;
+/* Transcript and reply areas: transparent overlays */
+textarea[placeholder*="transcript"] {
+  background: rgba(255,255,255,0.10) !important;
+  border: none !important;
+  box-shadow: none !important;
 }
-button[title="Show tools"]:active {
-  transform: scale(0.96) rotate(-2deg);
-  box-shadow: 0 1px 4px rgba(44,41,38,0.18);
+.ai-dialogue {
+  background: rgba(255,255,255,0.10) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Hide Porticos/world-building for now */
+.handwritten, h2.handwritten {
+  display: none !important;
 }
