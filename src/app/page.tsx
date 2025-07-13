@@ -339,7 +339,7 @@ export default function Home() {
       </header>
 
       {/* ─── Sliding Tools Panel ──────────────────────────────────── */}
-      <ToolsPanel isOpen={toolsOpen} tools={tools} onToggle={()=>setToolsOpen(o=>!o)} />
+      {toolsOpen && <ToolsPanel tools={tools} />}
 
       {/* ─── Main Draggable Tablet ────────────────────────────────── */}
       <main className="pt-12 pr-16 w-full h-screen bg-offWhite overflow-hidden">
