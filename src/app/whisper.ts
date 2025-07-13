@@ -4,22 +4,18 @@ export async function sendToWhisper(audioBlob: Blob): Promise<string | null> {
   formData.append('model', 'whisper-1');
 
   try {
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    const response = await fetch('/api/whisper', {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY || ''}`,
-      },
       body: formData,
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Transcription failed:', errorData);
+      console.error('Transcription failed:', await response.text());
       return null;
     }
 
-    const data = await response.json();
-    return data.text || '';
+    const { text } = await response.json();
+    return text as string;
   } catch (error) {
     console.error('Whisper error:', error);
     return null;
