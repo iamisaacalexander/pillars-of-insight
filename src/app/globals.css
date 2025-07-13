@@ -27,3 +27,20 @@ body {
 .animate-dash {
   animation: dash 0.8s forwards;
 }
+
+/* Add .sketch-border fallback for browsers without SVG filter support */
+.sketch-border {
+  border: 2px solid #333333;
+  border-radius: 0.5rem;
+  background-clip: padding-box;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+}
+
+/* Optional: SVG filter for roughen effect (used by .sketch-border) */
+body::after {
+  content: '';
+  position: fixed;
+  pointer-events: none;
+  width: 0; height: 0;
+  /* SVG filter is defined in HTML or injected elsewhere */
+}

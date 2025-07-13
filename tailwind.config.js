@@ -22,7 +22,7 @@ module.exports = {
           borderRadius: "0.5rem",
           backgroundClip: "padding-box",
           boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.2)",
-          filter: "url(#roughen)",
+          // SVG filter is referenced in CSS, not here
         },
       });
     },
