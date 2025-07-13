@@ -35,18 +35,17 @@ export default function Home() {
 
   // refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef     = useRef<Blob[]>([]);
-  const analyserRef        = useRef<AnalyserNode | null>(null);
-  const audioCtxRef        = useRef<AudioContext | null>(null);
-  const rafRef             = useRef<number>(0);
+  const audioChunksRef   = useRef<Blob[]>([]);
+  const analyserRef      = useRef<AnalyserNode | null>(null);
+  const audioCtxRef      = useRef<AudioContext | null>(null);
+  const rafRef           = useRef<number>(0);
 
   // handle record + meter
   useEffect(() => {
     if (!isRecording) {
       // Stop recorder & meter
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-        mediaRecorderRef.current.stop();
-      }
+      mediaRecorderRef.current?.state !== 'inactive' &&
+        mediaRecorderRef.current?.stop();
       cancelAnimationFrame(rafRef.current);
       setFreqData([]);
       return;
@@ -56,7 +55,7 @@ export default function Home() {
       // meter
       const audioCtx = new AudioContext();
       audioCtxRef.current = audioCtx;
-      const source   = audioCtx.createMediaStreamSource(stream);
+      const source = audioCtx.createMediaStreamSource(stream);
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 256;
       source.connect(analyser);
@@ -65,10 +64,12 @@ export default function Home() {
       const updateMeter = () => {
         const raw = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(raw);
-        const chunk = Math.floor(raw.length / METER_BARS);
+        const chunkSize = Math.floor(raw.length / METER_BARS);
         const bars = Array.from({ length: METER_BARS }, (_, i) => {
-          const segment = raw.slice(i*chunk, (i+1)*chunk);
-          return segment.reduce((sum, v) => sum + v, 0) / segment.length / 255;
+          const segment = raw.slice(i * chunkSize, (i + 1) * chunkSize);
+          const avg =
+            segment.reduce((sum, v) => sum + v, 0) / segment.length;
+          return avg / 255;
         });
         setFreqData(bars);
         rafRef.current = requestAnimationFrame(updateMeter);
@@ -78,9 +79,9 @@ export default function Home() {
       // recorder
       const mr = new MediaRecorder(stream);
       mediaRecorderRef.current = mr;
-      audioChunksRef.current  = [];
+      audioChunksRef.current = [];
 
-      mr.ondataavailable = e => audioChunksRef.current.push(e.data);
+      mr.ondataavailable = (e) => audioChunksRef.current.push(e.data);
       mr.onstop = async () => {
         cancelAnimationFrame(rafRef.current);
         try {
@@ -89,8 +90,12 @@ export default function Home() {
           }
         } catch {}
         setTranscript('📝 Transcribing…');
-        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+        const blob = new Blob(audioChunksRef.current, {
+          type: 'audio/webm',
+        });
+        const file = new File([blob], 'recording.webm', {
+          type: 'audio/webm',
+        });
         const text = await sendToWhisper(file);
         setTranscript(text || '❗ Could not transcribe.');
       };
@@ -101,15 +106,17 @@ export default function Home() {
 
   // mic / GPT handlers
   const handleMicClick = () => {
-    setTranscript(''); setGptReply(''); setIsRecording(r => !r);
+    setTranscript('');
+    setGptReply('');
+    setIsRecording((r) => !r);
   };
   const handleSendClick = async () => {
     if (!transcript) return;
     setGptReply('💡 Thinking…');
     try {
       const res = await fetch('/api/gpt', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: transcript }),
       });
       if (!res.ok) throw new Error(await res.text());
@@ -120,7 +127,7 @@ export default function Home() {
     }
   };
 
-  // cycle through normal → header only → compact “watch” mode
+  // cycle through modes
   const cycleTabletMode = () => {
     if (tabletMode === 'normal') {
       setPrevSize(size);
@@ -131,15 +138,15 @@ export default function Home() {
       setSize({ width: 80, height: 80 });
       setTabletMode('compact');
     } else {
-      // back to full
       setSize(prevSize);
       setTabletMode('normal');
     }
   };
 
   // drag & resize
-  const onDragStop: RndDragCallback = (_e, d) => setPosition({ x: d.x, y: d.y });
-  const onResizeStop: RndResizeCallback = (_e, _dir, ref, _delta, newPos) => {
+  const onDragStop: RndDragCallback = (_e, d) =>
+    setPosition({ x: d.x, y: d.y });
+  const onResizeStop: RndResizeCallback = (_e, _dir, ref, _d, newPos) => {
     setSize({ width: ref.offsetWidth, height: ref.offsetHeight });
     setPosition(newPos);
   };
@@ -152,10 +159,13 @@ export default function Home() {
       </header>
 
       {/* tools */}
-      <ToolsPanel isOpen={toolsOpen} onToggle={() => setToolsOpen(o => !o)} />
+      <ToolsPanel
+        isOpen={toolsOpen}
+        onToggle={() => setToolsOpen((o) => !o)}
+      />
 
       {/* main */}
-      <main className="pt-12 pr-16 w-full h-screen bg-[#f7f2eb] overflow-hidden">
+      <main className="pt-12 pr-16 w-full h-screen bg-paperCream overflow-hidden">
         <Rnd
           size={size}
           position={position}
@@ -165,9 +175,7 @@ export default function Home() {
           minWidth={80}
           minHeight={HEADER_BAR_HEIGHT}
         >
-          <div
-            className="sketch-border flex flex-col bg-paperCream rounded-2xl shadow-xl h-full"
-          >
+          <div className="sketch-border flex flex-col bg-paperCream rounded-2xl shadow-xl h-full">
             {/* title bar */}
             <div
               className="flex items-center justify-between px-4 cursor-move select-none bg-transparent rounded-t-2xl"
@@ -179,17 +187,14 @@ export default function Home() {
               <button
                 onClick={cycleTabletMode}
                 className="text-charcoal hover:text-white pencil-float"
-                title={
-                  tabletMode === 'normal'
-                    ? 'Minimize to header'
-                    : tabletMode === 'header'
-                    ? 'Compact mode'
-                    : 'Restore full'
-                }
               >
-                {tabletMode === 'compact' ? <FaWindowRestore />
-                 : tabletMode === 'header'  ? <FaSquare />
-                 : <FaWindowMinimize />}
+                {tabletMode === 'compact' ? (
+                  <FaWindowRestore />
+                ) : tabletMode === 'header' ? (
+                  <FaSquare />
+                ) : (
+                  <FaWindowMinimize />
+                )}
               </button>
             </div>
 
@@ -198,7 +203,7 @@ export default function Home() {
               <div className="flex-1 p-4 overflow-auto flex flex-col">
                 <textarea
                   value={transcript}
-                  onChange={e => setTranscript(e.target.value)}
+                  onChange={(e) => setTranscript(e.target.value)}
                   placeholder="🎙️ Your transcript will appear here…"
                   className="w-full p-3 mb-3 bg-white bg-opacity-20 rounded-lg text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-charcoal resize-none h-24"
                 />
@@ -233,7 +238,7 @@ export default function Home() {
                       <div
                         key={i}
                         className="flex-1 bg-gradient-to-t from-charcoal to-paperCream rounded-sm transition-all"
-                        style={{ height: `${lvl*100}%`, minWidth: 2 }}
+                        style={{ height: `${lvl * 100}%`, minWidth: 2 }}
                       />
                     ))}
                   </div>

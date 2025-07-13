@@ -13,11 +13,11 @@ export function BrickThumbnail({
 }: BrickThumbnailProps) {
   return (
     <div
-      className="sketch-border p-2 cursor-pointer transition-all hover:shadow-lg pencil-float"
+      className="sketch-border p-2 cursor-pointer transition-all hover:shadow-lg pencil-float bg-paperCream"
       onClick={onClick}
     >
       <img src={thumbnailUrl} alt={title} className="rounded-sm w-full" />
-      <p className="mt-2 text-sm relative inline-block">
+      <p className="mt-2 text-sm relative inline-block text-charcoal">
         <svg className="absolute inset-0 w-full h-full">
           <line
             x1="0"

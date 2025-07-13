@@ -8,7 +8,6 @@ module.exports = {
     extend: {
       colors: {
         charcoal: "#333333",
-        offWhite: "#f7f2eb",
         paperCream: "#f7f2eb",
       },
     },
@@ -16,7 +15,7 @@ module.exports = {
   plugins: [
     function ({ addComponents }) {
       addComponents({
-        /* Hand-drawn sketchy border, applied via .sketch-border */
+        /* Hand-drawn sketchy border */
         ".sketch-border": {
           border: "2px solid #333333",
           borderRadius: "0.5rem",

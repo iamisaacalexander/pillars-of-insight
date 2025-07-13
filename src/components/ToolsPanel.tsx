@@ -1,17 +1,20 @@
-import React from 'react';
+import React from "react";
 
 export interface ToolsPanelProps {
   isOpen: boolean;
   onToggle: () => void;
 }
 
-export const ToolsPanel: React.FC<ToolsPanelProps> = ({ isOpen, onToggle }) => {
+export const ToolsPanel: React.FC<ToolsPanelProps> = ({
+  isOpen,
+  onToggle,
+}) => {
   return (
     <aside
       className={`fixed top-16 right-4 z-30 transition-transform duration-300 ${
-        isOpen ? 'translate-x-0' : 'translate-x-full'
+        isOpen ? "translate-x-0" : "translate-x-full"
       } bg-white bg-opacity-90 shadow-xl rounded-xl p-4 w-64 border border-gray-200`}
-      style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
+      style={{ pointerEvents: isOpen ? "auto" : "none" }}
     >
       <div className="flex items-center justify-between mb-2">
         <span className="font-semibold text-gray-800">🛠️ Tools</span>
@@ -24,9 +27,11 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ isOpen, onToggle }) => {
         </button>
       </div>
       <div className="text-gray-700 text-sm">
-        {/* Add your tools or quick actions here */}
+        {/* Wire up your actual tools here */}
         <p className="mb-2">No tools available yet.</p>
-        <p className="text-xs text-gray-400">You can add quick actions, settings, or utilities here.</p>
+        <p className="text-xs text-gray-400">
+          You can add quick actions, settings, or utilities here.
+        </p>
       </div>
     </aside>
   );
