@@ -11,7 +11,6 @@ import {
   FaWindowRestore,
 } from "react-icons/fa";
 import { ToolsPanel, Tool } from "@/components/ToolsPanel";
-import PersonaToggle from "../components/PersonaToggle";
 import Image from "next/image";
 
 const HEADER_BAR_HEIGHT = 48;
@@ -310,9 +309,6 @@ export default function Home() {
     setSize({ width: ref.offsetWidth, height: ref.offsetHeight });
     setPosition(newPos);
   };
-
-  // Add chisel result state for each brick
-  const [chiselResults, setChiselResults] = useState<Record<string, ContrarianSnippet[]>>({});
 
   // Add float state for playlist results
   // Define a type for float playlist videos
