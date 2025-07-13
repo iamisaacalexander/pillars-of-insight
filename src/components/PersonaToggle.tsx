@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 export interface PersonaToggleProps {
   persona: "aurora" | "echo";
@@ -14,7 +15,7 @@ export default function PersonaToggle({ persona, onChange }: PersonaToggleProps)
           persona==="aurora" ? "ring-2 ring-charcoal" : "opacity-50"
         }`}
       >
-        <img src="/assets/aurora.png" alt="Aurora" className="w-full h-full object-contain" />
+        <Image src="/assets/aurora.png" alt="Aurora" width={40} height={40} className="w-full h-full object-contain" />
       </button>
       <button
         onClick={() => onChange("echo")}
@@ -22,7 +23,7 @@ export default function PersonaToggle({ persona, onChange }: PersonaToggleProps)
           persona==="echo" ? "ring-2 ring-charcoal" : "opacity-50"
         }`}
       >
-        <img src="/assets/echo.png" alt="Echo" className="w-full h-full object-contain" />
+        <Image src="/assets/echo.png" alt="Echo" width={40} height={40} className="w-full h-full object-contain" />
       </button>
     </div>
   );

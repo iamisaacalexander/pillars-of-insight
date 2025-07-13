@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 export interface Tool {
   id: string;
@@ -25,7 +26,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
     style={{ pointerEvents: isOpen ? "auto" : "none" }}
   >
     <div className="flex items-center justify-between mb-2">
-      <img src="/assets/tools-icon.png" alt="Tools" className="w-6 h-6" />
+      <Image src="/assets/tools-icon.png" alt="Tools" width={24} height={24} className="w-6 h-6" />
       <button
         onClick={onToggle}
         className="text-charcoal hover:text-gray-800 text-lg font-bold px-2"
@@ -42,7 +43,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
           className="flex flex-col items-center p-1 sketch-border pencil-float"
           title={tool.label}
         >
-          <img src={tool.iconSrc} alt={tool.label} className="w-8 h-8 object-contain" />
+          <Image src={tool.iconSrc} alt={tool.label} width={32} height={32} className="w-8 h-8 object-contain" />
           <span className="text-xs text-charcoal mt-1">{tool.label}</span>
         </button>
       ))}

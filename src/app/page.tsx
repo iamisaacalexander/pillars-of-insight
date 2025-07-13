@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { ToolsPanel, Tool } from "@/components/ToolsPanel";
 import PersonaToggle from "../components/PersonaToggle";
+import Image from "next/image";
 
 const HEADER_BAR_HEIGHT = 48;
 const METER_BARS = 32;
@@ -46,8 +47,9 @@ export default function Home() {
   // ─── Meter + Recorder Effect ───────────────────────────────────────
   useEffect(() => {
     if (!isRecording) {
-      mediaRecorderRef.current?.state !== "inactive" &&
-        mediaRecorderRef.current?.stop();
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+        mediaRecorderRef.current.stop();
+      }
       cancelAnimationFrame(rafRef.current);
       setFreqData([]);
       return;
@@ -173,7 +175,7 @@ export default function Home() {
           onClick={()=>setToolsOpen(o=>!o)}
           className="absolute right-4"
         >
-          <img src="/assets/tools-icon.png" alt="Tools" className="w-6 h-6" />
+          <Image src="/assets/tools-icon.png" alt="Tools" width={24} height={24} className="w-6 h-6" />
         </button>
       </header>
 
