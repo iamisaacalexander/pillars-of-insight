@@ -99,6 +99,10 @@ export default function Home() {
   }, [isRecording]);
 
   // ─── Button Handlers ────────────────────────────────────────────────
+  const systemPrompts = {
+    aurora: "You are Aurora, the Warm Light of Understanding. You are reflective, empathetic, and intuitive. You help users navigate complex emotions behind ideas, excel at philosophical synthesis, and gently challenge them. Respond in a warm, encouraging, and thoughtful tone. Example: 'Let’s explore what that means together…'",
+    echo:   "You are Echo, the Sharp Clarifier. You are analytical, precise, and slightly stoic. You excel at source recall, timelines, and critical comparisons. Quote, link, and track multiple threads. Respond in a clear, concise, and direct manner. Example: 'Here’s what Dr. Sledge said, and how that compares to Kip Davis…'"
+  };
   const handleMicClick = () => {
     setTranscript("");
     setGptReply("");
@@ -107,11 +111,6 @@ export default function Home() {
   const handleSendClick = async () => {
     if (!transcript) return;
     setGptReply("💡 Thinking…");
-    // Persona-specific system prompts
-    const systemPrompts = {
-      aurora: "You are Aurora, the Warm Light of Understanding. You are reflective, empathetic, and intuitive. You help users navigate complex emotions behind ideas, excel at philosophical synthesis, and gently challenge them. Respond in a warm, encouraging, and thoughtful tone. Example: 'Let’s explore what that means together…'",
-      echo:   "You are Echo, the Sharp Clarifier. You are analytical, precise, and slightly stoic. You excel at source recall, timelines, and critical comparisons. Quote, link, and track multiple threads. Respond in a clear, concise, and direct manner. Example: 'Here’s what Dr. Sledge said, and how that compares to Kip Davis…'"
-    };
     try {
       const res = await fetch("/api/gpt", {
         method: "POST",
@@ -172,7 +171,6 @@ export default function Home() {
   type Portico = { id: string; title: string; pillars: Pillar[] };
   type Palisade = { porticos: Portico[] };
   const [palisade, setPalisade] = useState<Palisade>({ porticos: [] });
-  const [porticoPools, setPorticoPools] = useState<Record<string, ContrarianSnippet[]>>({});
 
   // ─── Add Portico (Manual & AI) ─────────────────────────────────────
   const addPortico = async (title?: string) => {
@@ -201,77 +199,6 @@ export default function Home() {
         { id: Date.now().toString(), title: newTitle!, pillars: [] }
       ]
     }));
-  };
-  const addPillarToPortico = async (porticoId: string, title?: string) => {
-    let newTitle = title;
-    if (!newTitle) {
-      setGptReply("💡 Suggesting a pillar title…");
-      try {
-        const res = await fetch("/api/gpt", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: `Suggest a creative title for a new pillar (supporting idea) in the portico '${palisade.porticos.find(p=>p.id===porticoId)?.title || ''}'.`,
-            system: systemPrompts[persona]
-          }),
-        });
-        const { reply } = await res.json();
-        newTitle = reply || "Untitled Pillar";
-      } catch {
-        newTitle = "Untitled Pillar";
-      }
-      setGptReply("");
-    }
-    setPalisade(p => ({
-      porticos: p.porticos.map(portico =>
-        portico.id === porticoId
-          ? { ...portico, pillars: [...portico.pillars, { id: Date.now().toString(), title: newTitle!, bricks: [] }] }
-          : portico
-      )
-    }));
-  };
-  const addBrickToPillar = async (porticoId: string, pillarId: string, youtubeUrl: string) => {
-    setGptReply("🔎 Fetching video info and transcript…");
-    try {
-      const res = await fetch("/api/youtube", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: youtubeUrl }),
-      });
-      if (!res.ok) throw new Error(await res.text());
-      const { videoId, title, author, thumbnailUrl, transcript } = await res.json();
-      setPalisade(p => ({
-        porticos: p.porticos.map(portico =>
-          portico.id === porticoId
-            ? {
-                ...portico,
-                pillars: portico.pillars.map(pillar =>
-                  pillar.id === pillarId
-                    ? {
-                        ...pillar,
-                        bricks: [
-                          ...pillar.bricks,
-                          {
-                            id: Date.now().toString(),
-                            videoId,
-                            title,
-                            author,
-                            thumbnailUrl,
-                            transcript,
-                            contrarianSnippets: [],
-                          },
-                        ],
-                      }
-                    : pillar
-                ),
-              }
-            : portico
-        ),
-      }));
-      setGptReply("");
-    } catch {
-      setGptReply("❗ Error fetching video info or transcript.");
-    }
   };
 
   // ─── Tools Array ──────────────────────────────────────────────────
