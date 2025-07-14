@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from "react";
-import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
 import { sendToWhisper } from "./whisper";
 import {
   FaMicrophone,
@@ -28,7 +27,6 @@ export default function Home() {
   const [tabletMode, setTabletMode] = useState<TabletMode>("normal");
   const [size, setSize]             = useState({ width: 380, height: 440 });
   const [prevSize, setPrevSize]     = useState(size);
-  const [position, setPosition]     = useState({ x: 100, y: 120 });
 
   // ─── Persona ────────────────────────────────────────────────────────
   const [persona] = useState<"aurora"|"echo">("aurora");
@@ -162,13 +160,6 @@ export default function Home() {
     { id: "pool", label: "Pool", iconSrc: "/assets/bucket.png", onClick: () => {} },
     { id: "float", label: "Float", iconSrc: "/assets/float.png", onClick: () => {} },
   ];
-
-  // ─── Drag & Resize Callbacks ──────────────────────────────────────
-  const onDragStop: RndDragCallback = (_e,d) => setPosition({ x:d.x,y:d.y });
-  const onResizeStop: RndResizeCallback = (_e,_d,ref,_delta,newPos) => {
-    setSize({ width: ref.offsetWidth, height: ref.offsetHeight });
-    setPosition(newPos);
-  };
 
   // Add float state for playlist results
   // Define a type for float playlist videos
