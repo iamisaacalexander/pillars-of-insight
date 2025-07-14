@@ -195,8 +195,8 @@ export default function Home() {
             priority
             draggable={false}
           />
-          {/* Tablet content (centered, inside PNG) */}
-          <div className="relative z-10 flex flex-col w-[70vw] h-[80vh] mx-auto my-auto" style={{ minWidth: 480, minHeight: 480, maxWidth: 900, maxHeight: 900 }}>
+          {/* Tablet content absolutely positioned over PNG, no background */}
+          <div className="absolute left-1/2 top-1/2 z-10 flex flex-col" style={{ transform: 'translate(-50%, -50%)', width: '70vw', height: '80vh', minWidth: 480, minHeight: 480, maxWidth: 900, maxHeight: 900 }}>
             {/* Title Bar */}
             <div
               className="flex items-center justify-between px-4 py-2 bg-white bg-opacity-30 rounded-t-lg shadow-sm handwritten text-xl font-bold text-charcoal"
@@ -265,9 +265,9 @@ export default function Home() {
               </div>
             )}
           </div>
-          {/* Toolbar snapped to right edge of tablet PNG, outside tablet content */}
+          {/* Toolbar snapped to right edge of tablet PNG, outside tablet content, no extra padding */}
           {tabletMode !== "compact" && (
-            <div className="absolute top-1/2 right-[14vw] -translate-y-1/2 z-20" style={{ minWidth: 64, padding: 0, margin: 0 }}>
+            <div className="absolute top-1/2 z-20" style={{ left: 'calc(50% + 35vw)', transform: 'translateY(-50%)', minWidth: 64, padding: 0, margin: 0 }}>
               <ToolsPanel tools={tools} />
             </div>
           )}
