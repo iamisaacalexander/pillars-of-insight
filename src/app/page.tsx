@@ -184,19 +184,20 @@ export default function Home() {
 
       {/* ─── Main Draggable Tablet ────────────────────────────────── */}
       <main className="w-full h-screen bg-offWhite overflow-hidden flex items-center justify-center p-0 m-0">
-        <div className="relative w-full h-full flex items-center justify-center p-0 m-0">
-          {/* Tablet PNG background, fills viewport */}
+        <div className="relative flex items-center justify-center p-0 m-0" style={{ width: 1200, height: 800 }}>
+          {/* Tablet PNG at natural size, centered */}
           <Image
             src={tabletMode === "compact" ? "/assets/tablet-mini.png" : "/assets/tablet.png"}
             alt="Tablet"
-            fill
-            className="absolute left-0 top-0 w-full h-full z-0 pointer-events-none select-none transition-all duration-300"
-            style={{ objectFit: 'fill' }}
+            width={1200}
+            height={800}
+            className="absolute left-0 top-0 z-0 pointer-events-none select-none transition-all duration-300"
+            style={{ width: 1200, height: 800 }}
             priority
             draggable={false}
           />
           {/* Tablet content absolutely positioned over PNG, no background */}
-          <div className="absolute left-1/2 top-1/2 z-10 flex flex-col" style={{ transform: 'translate(-50%, -50%)', width: '70vw', height: '80vh', minWidth: 480, minHeight: 480, maxWidth: 900, maxHeight: 900 }}>
+          <div className="absolute left-0 top-0 z-10 flex flex-col" style={{ width: 1200, height: 800 }}>
             {/* Title Bar */}
             <div
               className="flex items-center justify-between px-4 py-2 bg-white bg-opacity-30 rounded-t-lg shadow-sm handwritten text-xl font-bold text-charcoal"
@@ -267,7 +268,7 @@ export default function Home() {
           </div>
           {/* Toolbar snapped to right edge of tablet PNG, outside tablet content, no extra padding */}
           {tabletMode !== "compact" && (
-            <div className="absolute top-1/2 z-20" style={{ left: 'calc(50% + 35vw)', transform: 'translateY(-50%)', minWidth: 64, padding: 0, margin: 0 }}>
+            <div className="absolute top-1/2 z-20" style={{ left: 1200, transform: 'translateY(-50%)', minWidth: 64, padding: 0, margin: 0 }}>
               <ToolsPanel tools={tools} />
             </div>
           )}
