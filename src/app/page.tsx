@@ -18,6 +18,26 @@ const HEADER_BAR_HEIGHT = 48;
 const METER_BARS = 32;
 type TabletMode = "normal" | "header" | "compact";
 
+// Types for world-building structures
+interface Brick {
+  id: string;
+  title: string;
+  author: string;
+}
+interface Pillar {
+  id: string;
+  title: string;
+  bricks: Brick[];
+}
+interface Portico {
+  id: string;
+  title: string;
+  pillars: Pillar[];
+}
+interface Palisade {
+  porticos: Portico[];
+}
+
 export default function Home() {
   // ─── Recording + Transcript ─────────────────────────────────────────
   const [isRecording, setIsRecording] = useState(false);
@@ -151,25 +171,6 @@ export default function Home() {
     setPosition(newPos);
   };
 
-  // ─── World Structure Types ─────────────────────────────────────────
-  type ContrarianSnippet = {
-    summary: string;
-    source: string;
-    videoRef?: string;
-  };
-  type Brick = {
-    id: string;
-    videoId: string;
-    title: string;
-    author: string;
-    thumbnailUrl: string;
-    sketchUrl?: string;
-    transcript: string;
-    contrarianSnippets: ContrarianSnippet[];
-  };
-  type Pillar = { id: string; title: string; bricks: Brick[] };
-  type Portico = { id: string; title: string; pillars: Pillar[] };
-  type Palisade = { porticos: Portico[] };
   const [palisade, setPalisade] = useState<Palisade>({ porticos: [] });
 
   // ─── Add Portico (Manual & AI) ─────────────────────────────────────
@@ -348,7 +349,39 @@ export default function Home() {
                   <div className="mb-4">
                     <h2 className="text-base font-bold text-charcoal mb-2 handwritten">Porticos</h2>
                     <ul className="space-y-2">
-                      {/* ...portico/pillar/brick rendering as in your provided code... */}
+                      {palisade.porticos.map((portico: Portico) => (
+                        <li key={portico.id} className="sketch-border bg-white bg-opacity-80 p-2 rounded">
+                          <div className="font-semibold text-charcoal flex items-center justify-between">
+                            {portico.title}
+                            <button
+                              className="ml-2 text-xs px-2 py-1 bg-charcoal text-white rounded"
+                              onClick={() => {
+                                const newTitle = prompt('New pillar title?');
+                                if (!newTitle) return;
+                                setPalisade((p: Palisade) => ({
+                                  porticos: p.porticos.map((pt: Portico) => pt.id === portico.id
+                                    ? { ...pt, pillars: [...pt.pillars, { id: Date.now().toString(), title: newTitle, bricks: [] }] }
+                                    : pt)
+                                }));
+                              }}
+                            >+ Pillar</button>
+                          </div>
+                          <ul className="ml-4 mt-2 space-y-1">
+                            {portico.pillars.map((pillar: Pillar) => (
+                              <li key={pillar.id} className="font-medium text-gray-700">
+                                {pillar.title}
+                                <ul className="ml-4 mt-1 space-y-0.5">
+                                  {pillar.bricks.map((brick: Brick) => (
+                                    <li key={brick.id} className="text-xs text-gray-600">
+                                      🧱 {brick.title} <span className="italic">by {brick.author}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </li>
+                            ))}
+                          </ul>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
