@@ -192,125 +192,105 @@ export default function Home() {
       {/* Removed toolsOpen conditional ToolsPanel rendering */}
 
       {/* ─── Main Draggable Tablet ────────────────────────────────── */}
-      <main className="w-full h-screen bg-offWhite overflow-hidden flex items-center justify-center">
-        <Rnd
-          size={size}
-          position={position}
-          onDragStop={onDragStop}
-          onResizeStop={onResizeStop}
-          bounds="parent"
-          minWidth={380}
-          minHeight={440}
-          enableResizing={false} // Prevent resizing for now to keep proportions
-        >
-          <div
-            className={`relative flex h-full w-full transition-all duration-300 ease-in-out ${tabletMode === "compact" ? "shadow-lg" : "shadow-2xl"}`}
-            style={{ background: 'none' }}
-          >
-            {/* Tablet PNG background */}
-            <Image
-              src={tabletMode === "compact" ? "/assets/tablet-mini.png" : "/assets/tablet.png"}
-              alt="Tablet"
-              fill
-              className="absolute left-0 top-0 w-full h-full z-0 pointer-events-none select-none transition-all duration-300"
-              style={{ objectFit: 'fill' }}
-              priority
-              draggable={false}
-            />
-            {/* Tablet content and toolbar inside the tablet */}
-            <div className="relative flex flex-row flex-1 h-full z-10 tablet-content" style={{ minHeight: 0, justifyContent: 'flex-start', background: 'none' }}>
-              {/* Main content area (left, inside tablet) */}
-              <div
-                className="flex flex-col flex-1 h-full px-[60px] py-[48px]"
-                style={{ justifyContent: 'flex-start', minWidth: 0 }}
+      <main className="w-full h-screen bg-offWhite overflow-hidden flex items-center justify-center p-0 m-0">
+        <div className="relative w-full h-full flex items-center justify-center p-0 m-0">
+          {/* Tablet PNG background, fills viewport */}
+          <Image
+            src={tabletMode === "compact" ? "/assets/tablet-mini.png" : "/assets/tablet.png"}
+            alt="Tablet"
+            fill
+            className="absolute left-0 top-0 w-full h-full z-0 pointer-events-none select-none transition-all duration-300"
+            style={{ objectFit: 'fill' }}
+            priority
+            draggable={false}
+          />
+          {/* Tablet content (centered, inside PNG) */}
+          <div className="relative z-10 flex flex-col w-[70vw] h-[80vh] mx-auto my-auto" style={{ minWidth: 480, minHeight: 480, maxWidth: 900, maxHeight: 900 }}>
+            {/* Title Bar */}
+            <div
+              className="flex items-center justify-between px-4 py-2 bg-white bg-opacity-30 rounded-t-lg shadow-sm handwritten text-xl font-bold text-charcoal"
+              style={{ minHeight: HEADER_BAR_HEIGHT, marginBottom: 8 }}
+            >
+              <span>{persona === "aurora" ? "Aurora" : persona === "echo" ? "Echo" : "GPT"}</span>
+              <button
+                onClick={cycleTabletMode}
+                className="pencil-float text-charcoal hover:text-gray-800 transition-transform duration-200 active:scale-95"
+                title={
+                  tabletMode === "normal" ? "Minimize to header" :
+                  tabletMode === "header" ? "Compact mode" :
+                  "Restore full"
+                }
               >
-                {/* Title Bar */}
-                <div
-                  className="flex items-center justify-between px-4 py-2 bg-white bg-opacity-30 rounded-t-lg shadow-sm handwritten text-xl font-bold text-charcoal"
-                  style={{ minHeight: HEADER_BAR_HEIGHT, marginBottom: 8 }}
-                >
-                  <span>{persona === "aurora" ? "Aurora" : persona === "echo" ? "Echo" : "GPT"}</span>
+                {tabletMode === "compact" ? <FaWindowRestore /> :
+                  tabletMode === "header" ? <FaSquare /> :
+                    <FaWindowMinimize />}
+              </button>
+            </div>
+            {/* Transcript Area */}
+            {tabletMode !== "header" && (
+              <div className="flex-1 flex flex-col justify-start">
+                <textarea
+                  value={transcript}
+                  onChange={e => setTranscript(e.target.value)}
+                  placeholder="Your transcript will appear here…"
+                  className="w-full h-32 bg-white bg-opacity-10 rounded-lg text-base text-charcoal resize-none focus:outline-none focus:ring-2 focus:ring-charcoal mb-4 shadow-none border-none"
+                  style={{ minHeight: 96, maxHeight: 160, marginTop: 8, marginBottom: 8 }}
+                />
+                {/* GPT Reply */}
+                <div className="flex-1 p-3 mb-4 bg-white bg-opacity-10 rounded-lg text-base text-charcoal overflow-auto ai-dialogue shadow-none border-none" style={{ minHeight: 80 }}>
+                  {gptReply || "GPT reply will appear here…"}
+                </div>
+                {/* Controls */}
+                <div className="flex items-center gap-3 mb-3">
                   <button
-                    onClick={cycleTabletMode}
-                    className="pencil-float text-charcoal hover:text-gray-800 transition-transform duration-200 active:scale-95"
-                    title={
-                      tabletMode === "normal" ? "Minimize to header" :
-                      tabletMode === "header" ? "Compact mode" :
-                      "Restore full"
-                    }
+                    onClick={handleMicClick}
+                    className={`flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float ${
+                      isRecording ? "bg-opacity-10" : ""
+                    }`}
                   >
-                    {tabletMode === "compact" ? <FaWindowRestore /> :
-                      tabletMode === "header" ? <FaSquare /> :
-                        <FaWindowMinimize />}
+                    <FaMicrophone className="mr-2" />{
+                      isRecording ? "Stop Recording" : "Start Recording"
+                    }
+                  </button>
+                  <button
+                    onClick={handleSendClick}
+                    className="flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float"
+                  >
+                    <FaPaperPlane className="mr-2" />Send to GPT
                   </button>
                 </div>
-                {/* Transcript Area */}
-                {tabletMode !== "header" && (
-                  <div className="flex-1 flex flex-col justify-start">
-                    <textarea
-                      value={transcript}
-                      onChange={e => setTranscript(e.target.value)}
-                      placeholder="Your transcript will appear here…"
-                      className="w-full h-32 bg-white bg-opacity-10 rounded-lg text-base text-charcoal resize-none focus:outline-none focus:ring-2 focus:ring-charcoal mb-4 shadow-none border-none"
-                      style={{ minHeight: 96, maxHeight: 160, marginTop: 8, marginBottom: 8 }}
-                    />
-                    {/* GPT Reply */}
-                    <div className="flex-1 p-3 mb-4 bg-white bg-opacity-10 rounded-lg text-base text-charcoal overflow-auto ai-dialogue shadow-none border-none" style={{ minHeight: 80 }}>
-                      {gptReply || "GPT reply will appear here…"}
-                    </div>
-                    {/* Controls */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <button
-                        onClick={handleMicClick}
-                        className={`flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float ${
-                          isRecording ? "bg-opacity-10" : ""
-                        }`}
-                      >
-                        <FaMicrophone className="mr-2" />{
-                          isRecording ? "Stop Recording" : "Start Recording"
-                        }
-                      </button>
-                      <button
-                        onClick={handleSendClick}
-                        className="flex-1 flex items-center justify-center py-2 px-4 border-2 border-charcoal text-charcoal rounded-lg font-semibold transition hover:bg-charcoal hover:text-white pencil-float"
-                      >
-                        <FaPaperPlane className="mr-2" />Send to GPT
-                      </button>
-                    </div>
-                    {/* Audio Meter */}
-                    {isRecording && (
-                      <div className="w-full flex items-end gap-0.5 h-12">
-                        {freqData.map((lvl, i) => (
-                          <div
-                            key={i}
-                            className="flex-1 bg-gradient-to-t from-charcoal to-paperCream rounded-sm transition-all"
-                            style={{ height: `${lvl * 100}%` }}
-                          />
-                        ))}
-                      </div>
-                    )}
+                {/* Audio Meter */}
+                {isRecording && (
+                  <div className="w-full flex items-end gap-0.5 h-12">
+                    {freqData.map((lvl, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 bg-gradient-to-t from-charcoal to-paperCream rounded-sm transition-all"
+                        style={{ height: `${lvl * 100}%` }}
+                      />
+                    ))}
                   </div>
                 )}
               </div>
-              {/* Toolbar (right, inside tablet) */}
-              {tabletMode !== "compact" && (
-                <div className="flex flex-col items-center justify-center h-full px-2" style={{ background: 'none', minWidth: 64 }}>
-                  <ToolsPanel tools={tools} />
-                </div>
-              )}
-              {/* Mini-tablet tools icon */}
-              {tabletMode === "compact" && (
-                <button
-                  className="absolute right-2 top-2 z-30 bg-transparent border-none p-0"
-                  onClick={() => setTabletMode("normal")}
-                  title="Show tools"
-                >
-                  <Image src="/assets/tools-icon.png" alt="Tools" width={32} height={32} />
-                </button>
-              )}
-            </div>
+            )}
           </div>
-        </Rnd>
+          {/* Toolbar snapped to right edge of tablet PNG, outside tablet content */}
+          {tabletMode !== "compact" && (
+            <div className="absolute top-1/2 right-[14vw] -translate-y-1/2 z-20" style={{ minWidth: 64, padding: 0, margin: 0 }}>
+              <ToolsPanel tools={tools} />
+            </div>
+          )}
+          {/* Mini-tablet tools icon */}
+          {tabletMode === "compact" && (
+            <button
+              className="absolute right-2 top-2 z-30 bg-transparent border-none p-0"
+              onClick={() => setTabletMode("normal")}
+              title="Show tools"
+            >
+              <Image src="/assets/tools-icon.png" alt="Tools" width={32} height={32} />
+            </button>
+          )}
+        </div>
 
         {/* Render float playlist modal if present */}
         {floatPlaylist && (
