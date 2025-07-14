@@ -183,10 +183,11 @@ export default function Home() {
       {/* Removed toolsOpen conditional ToolsPanel rendering */}
 
       {/* ─── Main Tablet Centered and Floating ─────────────────────────────── */}
-      <main className="w-full h-screen bg-offWhite overflow-hidden flex items-center justify-center p-0 m-0">
-        <div className="flex flex-row items-center justify-center p-0 m-0 gap-0">
-          {/* Tablet PNG at natural size, floating */}
-          <div className="relative" style={{ width: 1200, height: 800 }}>
+      <main className="min-h-screen w-full bg-offWhite flex items-center justify-center p-0 m-0">
+        {/* Centered container for tablet and toolbar */}
+        <div className="flex flex-row items-center justify-center" style={{ minHeight: 800 }}>
+          {/* Tablet box at natural size */}
+          <div className="relative flex-shrink-0" style={{ width: 1200, height: 800, boxShadow: '0 4px 32px rgba(0,0,0,0.08)' }}>
             <Image
               src={tabletMode === "compact" ? "/assets/tablet-mini.png" : "/assets/tablet.png"}
               alt="Tablet"
@@ -198,7 +199,7 @@ export default function Home() {
               style={{ display: 'block', width: 1200, height: 800 }}
             />
             {/* Tablet content overlays, sized to fit inside tablet PNG */}
-            <div className="absolute left-0 top-0 z-20 flex flex-col border-4 border-red-500 bg-yellow-100 bg-opacity-50" style={{ width: 1200, height: 800 }}>
+            <div className="absolute left-0 top-0 z-10 flex flex-col" style={{ width: 1200, height: 800 }}>
               {/* Title Bar */}
               <div
                 className="flex items-center justify-between px-4 py-2 bg-white bg-opacity-30 rounded-t-lg shadow-sm handwritten text-xl font-bold text-charcoal"
@@ -270,7 +271,7 @@ export default function Home() {
           </div>
           {/* Toolbar snapped to right edge of tablet PNG, outside and not overlapping */}
           {tabletMode !== "compact" && (
-            <div className="flex flex-col items-center justify-center ml-2" style={{ height: 800, minWidth: 64, padding: 0, margin: 0 }}>
+            <div className="flex flex-col items-center justify-center ml-8" style={{ height: 800, minWidth: 64 }}>
               <ToolsPanel tools={tools} />
             </div>
           )}
