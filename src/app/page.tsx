@@ -404,6 +404,21 @@ export default function Home() {
           </div>
         </Rnd>
 
+        {/* Toolbar attached to the right side of the tablet, outside the tablet container */}
+        {tabletMode !== "compact" && (
+          <div
+            className="tablet-toolbar fixed z-30 pointer-events-auto"
+            style={{
+              left: position.x + size.width,
+              top: position.y,
+              height: size.height,
+              // Optionally add a small offset if you want spacing
+            }}
+          >
+            <ToolsPanel tools={tools} />
+          </div>
+        )}
+
         {/* Render float playlist modal if present */}
         {floatPlaylist && (
           <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
