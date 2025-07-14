@@ -198,7 +198,7 @@ export default function Home() {
               style={{ display: 'block', width: 1200, height: 800 }}
             />
             {/* Tablet content overlays, sized to fit inside tablet PNG */}
-            <div className="absolute left-0 top-0 z-10 flex flex-col" style={{ width: 1200, height: 800 }}>
+            <div className="absolute left-0 top-0 z-20 flex flex-col border-4 border-red-500 bg-yellow-100 bg-opacity-50" style={{ width: 1200, height: 800 }}>
               {/* Title Bar */}
               <div
                 className="flex items-center justify-between px-4 py-2 bg-white bg-opacity-30 rounded-t-lg shadow-sm handwritten text-xl font-bold text-charcoal"
